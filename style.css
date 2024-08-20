@@ -13,7 +13,7 @@ header {
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
-    background-image: url("Images/nike-bg-6.gif");
+    background-image: url("images/home/1.jpeg");
     background-attachment: fixed;
     width: 100%;
     height: 80%;
@@ -37,17 +37,22 @@ header {
 .border {
     color: white;
     margin: 0;
-    font-size: 10vh;
+    font-size: 5vh;
     font-family: "Montserrat";
     font-weight: 700;
     letter-spacing: 1px;
-    color: black;
+    
 }
-
+.border>li {
+    color: white;
+    margin: 0;
+    font-family: "Montserrat";
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 .border>p {
     text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
 }
-
 .pxtext>p>a {
     background-color: black;
     text-align: center;
@@ -69,9 +74,15 @@ header {
 
 .row {
     display: flex;
-    flex-direction: row;
 }
-
+.row-bestsale {
+    display: flex;
+    justify-content:center;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    width: 100%;
+    margin: 0 auto;
+}
 .col {
     width: 50%;
     padding: 40px 20px 40px 20px;
@@ -221,10 +232,20 @@ figcaption {
     font-size: 20px;
 }
 
-.item>a>img {
+.item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Đảm bảo văn bản cũng được căn giữa */
+    padding: 10px; /* Thêm khoảng cách xung quanh */
+}
+
+.item > a > img {
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
     border-radius: 7px;
+    width: 200px;
 }
+
 
 .item:hover {
     filter: brightness(50%);
