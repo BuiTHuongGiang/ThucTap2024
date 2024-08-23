@@ -7,23 +7,29 @@ html {
     overflow-x: hidden;
 }
 
-header {
-    position: relative;
-    opacity: 1;
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
-    background-image: url("images/home/1.jpeg");
-    background-attachment: fixed;
+.swiper {
     width: 100%;
-    height: 80%;
+    height: 800px;
 }
 
-@media (max-width: 600px) {
-    header {
-        background-image: url("Images/nike-bg-5.gif");
-        background-attachment: scroll;
-    }
+.swiper-slide {
+    background-position: center;
+    background-size:cover;
+    background-repeat: no-repeat;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 800px;
+    object-fit: cover;
+
+}
+
+
+header {
+    width: 100%;
+    height: auto;
 }
 
 .pxtext {
@@ -35,14 +41,15 @@ header {
 }
 
 .border {
-    color: white;
+    color: black;
     margin: 0;
     font-size: 5vh;
     font-family: "Montserrat";
     font-weight: 700;
     letter-spacing: 1px;
-    
+
 }
+
 .border>li {
     color: white;
     margin: 0;
@@ -50,9 +57,11 @@ header {
     font-weight: 700;
     letter-spacing: 1px;
 }
+
 .border>p {
     text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.6);
 }
+
 .pxtext>p>a {
     background-color: black;
     text-align: center;
@@ -75,14 +84,16 @@ header {
 .row {
     display: flex;
 }
+
 .row-bestsale {
     display: flex;
-    justify-content:center;
-    align-items:flex-start;
-    flex-wrap:wrap;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
     width: 100%;
     margin: 0 auto;
 }
+
 .col {
     width: 50%;
     padding: 40px 20px 40px 20px;
@@ -236,11 +247,13 @@ figcaption {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center; /* Đảm bảo văn bản cũng được căn giữa */
-    padding: 10px; /* Thêm khoảng cách xung quanh */
+    text-align: center;
+    /* Đảm bảo văn bản cũng được căn giữa */
+    padding: 10px;
+    /* Thêm khoảng cách xung quanh */
 }
 
-.item > a > img {
+.item>a>img {
     box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
     border-radius: 7px;
     width: 200px;

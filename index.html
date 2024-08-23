@@ -14,14 +14,56 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
         integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
     <!-- // thư viện icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- thư viện swiperjs -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="./js/preloader.js"></script>
+    
 </head>
 
 <body>
-    <div class="se-pre-con"></div>
+    
+    <!-- Slider main container -->
+    <div class="swiper">
+        
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+            <div class="swiper-slide">
+                <img src="./images/home/shop.jpeg" />  
+                <div class="pxtext">
+                    <span class="border">
+                        Bộ sưu tập Caviagi
+                    </span>
+                    <p><a href="pages/men.html">Shop Now</a></p>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img src="./images/home/shop_4.jpeg" />
+                <div class="pxtext">
+                    <span class="border">
+                        Bộ sưu tập Madame
+                    </span>
+                    <p><a href="pages/men.html">Shop Now</a></p>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <img src="./images/home/shop_8.png" />
+                <div class="pxtext">
+                    <span class="border">
+                        Bộ sưu tập Snoopy
+                    </span>
+                    <p><a href="pages/men.html">Shop Now</a></p>
+                </div>
+            </div>
+            ...
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
     <header id="home">
-        <nav>
+        <nav id="menu">
             <ul>
                 <li class="primary-nav">
                     <img src="images/icon/icon_shop.png" alt="logo" />
@@ -32,9 +74,6 @@
                         <i class="fas fa-shopping-cart"></i> CART
                     </a>
                 </li>
-                <li class="secondary-nav">
-                    <a href="./HTML/features.html">DESIGN SUMMARY</a>
-                </li>
                 <li class="secondary-nav"><a href="./pages/baby.html">BABY</a></li>
                 <li class="secondary-nav"><a href="./pages/women.html">WOMEN</a></li>
                 <li class="secondary-nav"><a href="./pages/men.html">MEN</a></li>
@@ -42,17 +81,10 @@
                     <a href="./pages/about-us.html">ABOUT AMEE</a>
                 </li>
             </ul>
-        </nav>
-        <div class="pxtext">
-            <span class="border">
-                Bộ sưu tập mùa hè 
-            </span>
-            <p><a href="pages/men.html">Shop Now</a></p>
-        </div>
+        </nav>      
     </header>
     <section>
-        <div class="row" style="width: 80%;
-      margin: 0 auto;">
+        <div class="row">
             <div class="col">
                 <div class="overlay-image">
                     <a href="pages/men.html">
@@ -83,7 +115,7 @@
             </div>
             <div class="col">
                 <div class="overlay-image">
-                    <a href="HTML/men.html">
+                    <a href="pages/baby.html">
                         <img class="image" src="images/home/baby.png" alt="Alt text" />
                         <div class="normal">
                             <div class="text">BABY</div>
@@ -99,7 +131,7 @@
     </section>
     <section class="preview">
         <h2 align="center">Best Sellers</h2>
-        <div class="row-bestsale" >
+        <div class="row-bestsale">
             <figure class="item">
                 <a href="HTML/info.html">
                     <img src="./images/home/AN07.png" alt="" width="100%" />
@@ -204,6 +236,7 @@
             </li>
         </ul>
     </footer>
+    <script defer src="./main.js"></script>
 </body>
 
 </html>
