@@ -12,7 +12,6 @@ header {
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
-    background-image: url("../images/home/1.jpeg");
     background-attachment: fixed;
     width: 100%;
     height: 80%;
@@ -23,29 +22,20 @@ nav {
     overflow: auto;
     background-color: whitesmoke !important;
 }
-
-.items {
-    margin: 0 10% 0 10%;
-}
-
-.row {
+.row-baby {
     display: flex;
-    flex-direction: row;
+    justify-content: center;
 }
 
-.col {
-    width: 10%;
+.col-baby {
+    width: 20%;
     margin-right: 40px;
     background: whitesmoke;
     padding: 30px;
-    position: fixed;
     left: 0px;
     top: 100px;
 }
 
-.col2 {
-    padding-left: 100px;
-}
 
 section h1 {
     font-size: 50px;
@@ -83,11 +73,12 @@ img {
     font-size: 20px;
 }
 
-.items2 {
+.list-product {
     display: flex;
+    align-items:flex-start;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .card a {
@@ -108,38 +99,34 @@ img {
 }
 
 .card>img {
-    height: 200px;
+    height: 250px;
     object-fit: cover;
+    width: 100%;
 }
 
 input {
     margin-bottom: 10px;
 }
 
-@media (max-width: 1400px) {
-    .card {
-        max-width: 250px;
-    }
-}
 
 @media (max-width: 768px) {
-    .row {
+    .row-baby {
         flex-direction: column;
     }
 
-    .col {
+    .col-baby {
         position: initial;
         width: initial;
         margin: 0 0 20px 0;
         padding: 20px;
     }
 
-    .items {
+    .list-product {
         margin: 0;
         padding: 0;
     }
 
-    .col2 {
+    .col-baby-2 {
         padding: 0;
     }
 }

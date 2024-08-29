@@ -14,7 +14,7 @@ html {
 
 .swiper-slide {
     background-position: center;
-    background-size:cover;
+    background-size: cover;
     background-repeat: no-repeat;
 }
 
@@ -83,6 +83,10 @@ header {
 
 .row {
     display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .row-bestsale {
@@ -95,8 +99,13 @@ header {
 }
 
 .col {
-    width: 50%;
-    padding: 40px 20px 40px 20px;
+    width: 30%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    height: 100%;
 }
 
 .overlay-image {
@@ -120,7 +129,7 @@ header {
 
 .overlay-image .text {
     color: #fff;
-    font-size: 5vw;
+    font-size: 80px;
     line-height: 1.5em;
     font-weight: bold;
     text-shadow: 2px 2px 2px #000;
@@ -159,10 +168,6 @@ header {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-#about-us {
-    margin: 0 10% 0 10%;
-}
-
 section h1 {
     font-size: 40px;
     text-align: center;
@@ -174,10 +179,6 @@ section p {
     line-height: 1.25em;
     padding: 0 0 1em 0;
     text-align: justify;
-}
-
-.foot {
-    margin: 0 10% 0 10%;
 }
 
 footer {
@@ -253,14 +254,81 @@ figcaption {
     /* Thêm khoảng cách xung quanh */
 }
 
-.item>a>img {
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
-    border-radius: 7px;
-    width: 200px;
+.item>a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 
 .item:hover {
     filter: brightness(50%);
     transition: .5s ease;
+}
+
+/* áp dụng từ 769 đến vô tận px */
+@media screen and (min-width: 769px) {
+    .container-icon {
+        display: none;
+    }
+
+    .item>a>img {
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
+        border-radius: 7px;
+        width: 250px;
+    }
+
+    /* trang about us */
+    .row-about-us {
+        flex-wrap: nowrap;
+    }
+
+    /* trang baby */
+    .row-baby {
+        flex-wrap: nowrap;
+    }
+    .card {
+        max-width: 200px;
+    }
+}
+
+/* từ 0 đến 768 màn hình mobile */
+@media screen and (max-width: 768px) {
+    /* trang chu  */
+    .col {
+        width: 100%;
+    }
+    #navbar-component {
+        display: none;
+    }
+
+    .item>a>img {
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
+        border-radius: 7px;
+        width: 100%;
+    }
+
+
+    /* trang about us */
+    .row-about-us {
+        flex-wrap: wrap;
+    }
+    /* trang baby */
+    .row-baby {
+        flex-wrap: wrap;
+    }
+    .col-baby {
+        width: 100%;
+    }
+    .card {
+        max-width: 250px;
+    }
+    .list-product {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }

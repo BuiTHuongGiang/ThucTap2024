@@ -8,42 +8,28 @@
     <title>MEN</title>
     <link rel="icon" href="../images/icon/icon_cart.png" sizes="32x32" />
     <link rel="stylesheet" href="../css/page/men.css" />
+    <link rel="stylesheet" href="../style.css" />
     <link rel="stylesheet" href="../css/navbar.css" />
     <!-- <link rel="stylesheet" href="css/preloader.css" /> -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
         integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- thư viện swiperjs -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <!-- // thư viện icon -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="./js/preloader.js"></script>
 </head>
 
 <body>
-    <header id="home">
-        <nav>
-            <ul>
-                <li class="primary-nav">
-                    <img src="../images/icon/icon_shop.png" alt="logo" />
-                    <a href="../index.html">AMEE</a>
-                </li>
-                <li class="secondary-nav">
-                    <a href="HTML/checkout.html">
-                        <i class="fas fa-shopping-cart"></i> CART
-                    </a>
-                </li>
-                <li class="secondary-nav"><a href="../pages/baby.html">BABY</a></li>
-                <li class="secondary-nav"><a href="../pages/women.html">WOMEN</a></li>
-                <li class="secondary-nav"><a href="../pages/men.html">MEN</a></li>
-                <li class="secondary-nav">
-                    <a href="../pages/about-us.html">ABOUT AMEE</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <header id="navbar-component"></header>
+    <i id="icon-menu" class="fa-light fa-bars"></i>
     <section class="items">
         <h1>MEN</h1>
-        <div class="row">
-            <div class="col">
+        <div class="row-men">
+            <div class="col-men">
                 <h2>SORT BY</h2>
                 <h3>PRICE</h3>
                 <hr />
@@ -65,9 +51,9 @@
                 <input type="radio" name="color" id="" /> BLUE <br />
                 <input type="radio" name="color" id="" /> GREY <br />
             </div>
-            <div class="col2">
+            <div class="col-men-2">
                 <img class="header-img" src="../images/product/men.png" alt="" />
-                <div class="items2">
+                <div class="list-product">
 
                     <div class="card">
                         <img src="../images/product/AM01/AM01_Den.avif" alt="Dress" data-src>
@@ -76,39 +62,41 @@
                         <p><a href="./info.html">Learn More</a></p>
                     </div>
                     <div class="card">
-                        <img src="../images/product/QM01/QM01_xanh.jpg" alt="Dress" >
+                        <img src="../images/product/QM01/QM01_xanh.jpg" alt="Dress">
                         <h3>Quần Washed Jersey | Vải Denim</h3>
                         <p class="price">489.000 VND</p>
                         <p><a href="./info.html">Learn More</a></p>
                     </div>
                     <div class="card">
-                        <img src="../images/product/AM02/AM02_Be.avif" alt="Dress" >
+                        <img src="../images/product/AM02/AM02_Be.avif" alt="Dress">
                         <h3>Áo Thun Vải Waffle | Cổ Henley</h3>
                         <p class="price">489.000 VND</p>
                         <p><a href="./info.html">Learn More</a></p>
                     </div>
                     <div class="card">
-                        <img src="../images/product/AM03/AM03_Xam.avif" alt="Dress" >
+                        <img src="../images/product/AM03/AM03_Xam.avif" alt="Dress">
                         <h3>Áo Nỉ</h3>
                         <p class="price">686.000 VND</p>
                         <p><a href="info.html">Learn More </a></p>
                     </div>
                     <div class="card">
-                        <img src="../images/product/BM01/BM01_1.avif" alt="Dress" >
+                        <img src="../images/product/BM01/BM01_1.avif" alt="Dress">
                         <h3>KAWS + Warhol Quần Nỉ</h3>
                         <p class="price">784.000 VND</p>
                         <p><a href="./info.html">Learn More</a></p>
                     </div>
                     <div class="card">
-                        <img src="../images/product/QM02/QM02_1.avif" alt="Dress" >
+                        <img src="../images/product/QM02/QM02_1.avif" alt="Dress">
                         <h3>Quần Vải Dạ Dài Đến Mắt Cá | Caro</h3>
                         <p class="price">686.000 VND</p>
                         <p><a href="./info.html">Learn More</a></p>
                     </div>
-                    </div>
                 </div>
             </div>
+        </div>
     </section>
+    <footer id="footer"></footer>
+    <script defer src="../main.js"></script>
 </body>
 
 </html>
