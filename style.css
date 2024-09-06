@@ -331,4 +331,14 @@ figcaption {
         align-items: center;
         justify-content: center;
     }
+
+    /* trang sản phẩm */
+    .row-product {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .row-product>.info-product {
+        width: 100%;
+    }
+
 }
