@@ -25,73 +25,32 @@
 
 <body>
     <header id="navbar-component"></header>
-    <i id="icon-menu" class="fa-light fa-bars"></i>
+
+    <div class="container-icon">
+        <div class="parent-icon"> 
+            <div class="icon-menu-open">
+                <i class="fas fa-bars fa-lg"></i>
+            </div>
+            <div class="icon-menu-close">
+                <i class="fas fa-times fa-lg"></i>
+            </div>
+        </div>
+    </div> 
     <section class="items">
         <h1>BABY</h1>
         <div class="row-baby">
-            <div class="col-baby">
+            <div class="container-sort">
                 <h2>SORT BY</h2>
-                <h3>PRICE</h3>
-                <hr />
-                <input type="radio" name="price" id="" /> Under 60.000 <br />
-                <input type="radio" name="price" id="" /> Over 60.000 <br />
                 <h3>SIZE</h3>
                 <hr />
-                <input type="radio" name="size" id="" /> XS <br />
-                <input type="radio" name="size" id="" /> S <br />
-                <input type="radio" name="size" id="" /> M <br />
-                <input type="radio" name="size" id="" /> L <br />
-                <input type="radio" name="size" id="" /> XL <br />
-                <input type="radio" name="size" id="" /> XXL <br />
-                <input type="radio" name="size" id="" /> XXL <br />
-                <h3>COLOR</h3>
+                <div id="size-sort"></div>
+                <h3 >COLOR</h3>
                 <hr />
-                <input type="radio" name="color" id="" /> Black <br />
-                <input type="radio" name="color" id="" /> White <br />
-                <input type="radio" name="color" id="" /> BLUE <br />
-                <input type="radio" name="color" id="" /> GREY <br />
+                <div id="color-sort"></div>
             </div>
             <div class="col-baby-2">
                 <img class="header-img" src="../images/product/baby.webp" alt="" />
-                <div class="list-product">
-
-                    <div class="card">
-                        <img src="../images/product/BABY01/BABY01_Xanh.avif" alt="Dress" data-src>
-                        <h3>Áo chống nắng </h3>
-                        <p class="price">293.000 VND</p>
-                        <p><a href="./info.html">Learn More</a></p>
-                    </div>
-                    <div class="card">
-                        <img src="../images/product/BB02/BB02_Xanh.avif" alt="Dress">
-                        <h3>Áo Polo Vải Dry Pique | Kẻ Sọc</h3>
-                        <p class="price">391.000 VND</p>
-                        <p><a href="./info.html">Learn More</a></p>
-                    </div>
-                    <div class="card">
-                        <img src="../images/product/BBQ01/BBQ01_1.avif" alt="Dress">
-                        <h3>Quần Jogger Dáng Relax</h3>
-                        <p class="price">391.000 VND</p>
-                        <p><a href="./info.html">Learn More</a></p>
-                    </div>
-                    <div class="card">
-                        <img src="../images/product/BB03/BB03_1.avif" alt="Dress">
-                        <h3>UT KAWS + Warhol Áo Thun</h3>
-                        <p class="price">244.000 VND</p>
-                        <p><a href="info.html">Learn More </a></p>
-                    </div>
-                    <div class="card">
-                        <img src="../images/product/BB04/BB04_1.avif" alt="Dress">
-                        <h3>Áo Sơ Mi Vải Dạ | Caro</h3>
-                        <p class="price">489.000 VND</p>
-                        <p><a href="./info.html">Learn More</a></p>
-                    </div>
-                    <div class="card">
-                        <img src="../images/product/BB05/BB05_Xanhduong_1.avif" alt="Dress">
-                        <h3>DRY-EX Áo Thun Siêu Co Giãn | Họa TIết</h3>
-                        <p class="price">244.000 VND</p>
-                        <p><a href="./info.html">Learn More</a></p>
-                    </div>
-                </div>
+                <div class="list-product"></div>
             </div>
     </section>
     <footer id="footer"></footer>
