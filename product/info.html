@@ -28,99 +28,69 @@
         <div class="parent-icon">
             <i id="icon-menu" class="fas fa-bars fa-lg"></i>
         </div>
-    </div>  
+    </div>
     <i id="icon-menu" class="fa-light fa-bars"></i>
     <section>
         <div class="row-product">
             <div class="swiper">
-                
                 <div class="swiper-wrapper">
-
-                    <div class="swiper-slide slide-info">
-                        <img src="../images/product/AN01/AN01D.jpg" />
-                    </div>
-                    <div class="swiper-slide slide-info">
-                        <img src="../images/product/AN01/AN01H.jpg" />
-                    </div>
-                    <div class="swiper-slide slide-info">
-                        <img src="../images/product/AN01/AN01R.jpg" />
-                    </div>
-                    <div class="swiper-slide slide-info">
-                        <img src="../images/product/AN01/AN01T.jpg" />
-                    </div>
-                    <div class="swiper-slide slide-info">
-                        <img src="../images/product/AN01/AN01V.jpg" />
-                    </div>
-                    ...
                 </div>
                 <div class="swiper-pagination"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
             </div>
             <div class="info-product">
-                <h1>AIRism Cotton Áo Thun</h1>
-                <h2>293.00 VND</h2>
+                <h1 class="name-product"></h1>
+                <h2 class="price-product"></h2>
                 <div class="col-info">
                     <hr />
                     <h2>Màu sắc</h2>
-                    <input type="radio" name="color" id="" /> Black <br />
-                    <input type="radio" name="color" id="" /> White <br />
-                    <input type="radio" name="color" id="" /> BLUE <br />
-                    <input type="radio" name="color" id="" /> GREY <br />
+                    <div id="info-product-color"></div>
                 </div>
-                
+
                 <div class="col-info">
-                <hr />
-                <h3>Kích cỡ</h3>
-                <input type="radio" name="size" id="" /> XS <br />
-                <input type="radio" name="size" id="" /> S <br />
-                <input type="radio" name="size" id="" /> M <br />
-                <input type="radio" name="size" id="" /> L <br />
-                <input type="radio" name="size" id="" /> XL <br />
-                <input type="radio" name="size" id="" /> XXL <br />
-                <input type="radio" name="size" id="" /> XXL <br />
+                    <hr />
+                    <h3>Kích cỡ</h3>
+                    <div id="info-product-size"></div>
                 </div>
                 <hr />
-                <span>
+
+                <div class="col-info">
+                    <hr />
                     <h3>Số lượng</h3>
-                    <select name="" id="">
-                        <option value="" selected disabled>Please select an option</option>
-                        <option value="">1</option>
-                        <option value="">2</option>
-                        <option value="">3</option>
-                        <option value="">4</option>
-                        <option value="">5</option>
-                        <option value="">6</option>
-                    </select>
-                </span>
-                <a class="button-cart" href="checkout.html">Add to cart</a> &nbsp;
-                &nbsp;
-                <a class="wishlist" href="">Add to wishlist</a>    
+                    <div id="info-product-number">
+                        <div class="parent-item-sort">
+                            <input type="radio" name="number" id="1" value="1">
+                            <p>1</p>
+                        </div>
+                        <div class="parent-item-sort">
+                            <input type="radio" name="number" id="2" value="2">
+                            <p>2</p>
+                        </div>
+                        <div class="parent-item-sort">
+                            <input type="radio" name="number" id="3" value="3">
+                            <p>3</p>
+                        </div>
+                        <div class="parent-item-sort">
+                            <input type="radio" name="number" id="4" value="4">
+                            <p>4</p>
+                        </div>
+                        <div class="parent-item-sort">
+                            <input type="radio" name="number" id="5" value="5">
+                            <p>5</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="button-cart">THÊM VÀO GIỎ HÀNG</button>
             </div>
+            
+        </div>
         </div>
     </section>
     <section class="description">
-        <p>
-            Chi tiết
-                - Thân được làm từ vải 'AIRism' mịn màng trông như cotton. 
-                - Đường viền cổ có gân. 
-                - Đường viền cổ hơi hẹp và kết cấu mịn màng mang lại vẻ ngoài tinh tế. 
-                - Đường cắt thoải mái và chiều dài cơ bản, hoàn hảo để mặc riêng. 
-                - Các đường xẻ bên hông và viền bất đối xứng tạo thêm điểm nhấn phong cách. 
-                - Thiết kế đơn giản, đa năng.  
-                - Kết hợp tốt với mọi loại quần. 
-            Chất liệu / Cách chăm sóc
-                Mã sản phẩm 465755
-                Xin lưu ý mã số nhận diện của sản phẩm có thể có sự khác biệt, kể cả khi đó là cùng một mặt hàng.
-                VẢI
-                70% Bông, 30% Polyeste
-                HƯỚNG DẪN GIẶT
-                Giặt máy nước lạnh, Giặt khô, Không sấy khô
-                - Những hình ảnh sản phẩm có thể bao gồm những màu không có sẵn.
-        </p>
+        <p class="content-description"></p>
     </section>
 
     <footer id="footer"></footer>
     <script defer src="../main.js"></script>
-</body> 
-
+</body>

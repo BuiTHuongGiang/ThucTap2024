@@ -5,9 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>CART</title>
+    <title>Checkout Form</title>
     <link rel="icon" href="../images/icon/icon_cart.png" sizes="32x32" />
-    <link rel="stylesheet" href="../css/page/cart.css" />
+    <link rel="stylesheet" href="../css/page/checkout.css" />
     <link rel="stylesheet" href="../style.css" />
     <link rel="stylesheet" href="../css/navbar.css" />
     <!-- <link rel="stylesheet" href="css/preloader.css" /> -->
@@ -22,7 +22,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="./js/preloader.js"></script>
 </head>
-
 <body>
     <header id="navbar-component"></header>
     <div class="container-icon">
@@ -35,27 +34,43 @@
             </div>
         </div>
     </div>  
-    <section>
-        <div class="row-cart">
-            <div class="column">
-                <h1>GIỎ HÀNG</h1>
-                <h5>CHỌN SẢN PHẨM</h5>
-                <div class="list-cart">
-                </div>
-                <hr />
+    <div class="checkout-container">
+        <h2>Checkout Form</h2>
+        <form id="checkoutForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="payment-method">Payment Method:</label>
+            <select id="payment-method" name="payment-method" required>
+                <option value="credit-card">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="cash-on-delivery">Cash on Delivery</option>
+            </select>
+
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="pending">Pending</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+            </select>
+
+            <div class="product-list">
+                <h3>Product List</h3>
             </div>
-            <form class="column2">
-                <h3>Thanh toán ngay</h3>
-                <h3 class="totals"></h3>
-                <div class="buttons">
-                    <a class="button-checkout" href="checkout.html">Xác nhận</a>
-                    <a class="cancel" href="../HTML/men.html">Tiếp tục mua hàng</a>
-                </div>
-            </form>
-        </div>
-    </section>
+
+            <label for="total">Total Amount:</label>
+            <input type="text" id="total" name="total" value="$33" readonly>
+
+            <button type="submit">Place Order</button>
+        </form>
+    </div>
     <footer id="footer"></footer>
     <script defer src="../main.js"></script>
 </body>
-
 </html>

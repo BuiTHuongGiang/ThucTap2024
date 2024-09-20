@@ -17,11 +17,6 @@ header {
     height: 80%;
 }
 
-nav {
-    position: relative !important;
-    overflow: auto;
-    background-color: whitesmoke !important;
-}
 .row-women {
     display: flex;
     justify-content: center;

@@ -175,8 +175,7 @@ section h1 {
 
 section p {
     color: #000;
-    font-size: 1.2vw;
-    line-height: 1.25em;
+    font-size: 16px;
     padding: 0 0 1em 0;
     text-align: justify;
 }
@@ -378,4 +377,29 @@ figcaption {
         width: 100%;
     }
 
+    /* trang cart */
+    .row-cart{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: start;
+        align-items: start;
+        margin: 50px 20px;
+        gap: 40px;
+    }
+    .cart-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .row-cart>.column {
+        width: 100%
+    }
+    
+    .row-cart>.column2 {
+        width: 100%
+    }
 }

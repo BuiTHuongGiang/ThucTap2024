@@ -21,7 +21,7 @@ section {
 .row-product>.info-product {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     width: 100%
     
 }
@@ -122,4 +122,10 @@ video {
 
 video:focus {
     outline: none;
+}
+#info-product-number{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    gap: 5px;
 }

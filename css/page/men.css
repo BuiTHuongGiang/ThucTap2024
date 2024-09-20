@@ -18,11 +18,6 @@ header {
     height: 80%;
 }
 
-nav {
-    position: relative !important;
-    overflow: auto;
-    background-color: whitesmoke !important;
-}
 .row-men {
     display: flex;
     justify-content: center;

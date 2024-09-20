@@ -1,3 +1,15 @@
+// xu ly link 
+function textToSlug(text) {
+    return text
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/^-+|-+$/g, ''); 
+}
+
 // xử lý trượt ảnh cop từ tài liệu 
 const swiper = new Swiper('.swiper', {
     spaceBetween: 30,
@@ -327,42 +339,63 @@ async function formatSheetData(url){
     }
 }
 
-async function getAllData(){
-    const productData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT}?key=${API_KEY}`)
-    const productImageData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_IMAGE}?key=${API_KEY}`)
-    const productSizeData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_SIZE}?key=${API_KEY}`)
-    const productColorData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_COLOR}?key=${API_KEY}`)
-    const sizeData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`)
-    const colorData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`)
-    const customerData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_CUSTOMER_PRODUCT}?key=${API_KEY}`)
-    // ket hop tat ca cac bang co truonf product id vao 1 bang product data
-    const joinColors = (productColorData,colorData) => {
-        return productColorData.map(productColor => {
-            const color = colorData.find(c => c.id === productColor.color_id);
-            return {...productColor,...color};
-        });
-    }
+async function getAllData() {
+    try {
+        // Gọi tất cả API song song bằng Promise.all
+        const [productData, productImageData, productSizeData, productColorData, sizeData, colorData, customerData] = await Promise.all([
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_IMAGE}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_SIZE}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_COLOR}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`),
+            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_CUSTOMER_PRODUCT}?key=${API_KEY}`)
+        ]);
 
-    const joinSizes = (productSizeData,sizeData) => {
-        return productSizeData.map(productSize => {
-            const size = sizeData.find(c => c.id === productSize.size_id);
-            return {...productSize,...size};
-        });
-    }
+        // Kiểm tra xem dữ liệu có hợp lệ trước khi xử lý
+        if (!productData || !productColorData || !colorData || !productSizeData || !sizeData || !productImageData) {
+            throw new Error('Dữ liệu trả về từ API bị lỗi hoặc rỗng');
+        }
 
-    // du lieu product sau khi dduoc ket hop 
-    const mixProducts= await productData.map(product => {
-        const color = joinColors(productColorData,colorData).filter(c => c.product_id === product.id).map(c => c)
-        const size = joinSizes(productSizeData,sizeData).filter(c => c.product_id === product.id).map(c => c)
-        const image = productImageData.filter(c => c.product_id === product.id).map(c => c);
-        return {...product,color,size,image};
-    })
-    return mixProducts
+        // Kết hợp màu sắc với dữ liệu productColor và color
+        const joinColors = (productColorData, colorData) => {
+            return productColorData.map(productColor => {
+                const color = colorData.find(c => c.id === productColor.color_id);
+                return { ...productColor, ...color };
+            });
+        }
+
+        // Kết hợp size với dữ liệu productSize và size
+        const joinSizes = (productSizeData, sizeData) => {
+            return productSizeData.map(productSize => {
+                const size = sizeData.find(c => c.id === productSize.size_id);
+                return { ...productSize, ...size };
+            });
+        }
+
+        // Kết hợp dữ liệu product với màu sắc, size và hình ảnh
+        const mixProducts = productData.map(product => {
+            const color = joinColors(productColorData, colorData).filter(c => c.product_id === product.id);
+            const size = joinSizes(productSizeData, sizeData).filter(c => c.product_id === product.id);
+            const image = productImageData.filter(c => c.product_id === product.id);
+            return { ...product, color, size, image };
+        });
+
+        return mixProducts;
+
+    } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu:', error.message);
+        return []; // Trả về một mảng trống trong trường hợp lỗi
+    }
 }
 
+// lay link web 
+const pathName = window.location.pathname
+
 // tao sort by
-async function creatSortByProduct() {
-    const containerSortElement = document.querySelector(".container-sort");
+async function creatSortByProduct(pathName) {
+    const validPaths = ['/pages/women.html', '/pages/men.html', '/pages/baby.html'];
+    if (!validPaths.includes(pathName)) return
     const sizeSortElement = document.querySelector("#size-sort");
     const colorSortElement = document.querySelector("#color-sort");
 
@@ -403,10 +436,7 @@ async function creatSortByProduct() {
         colorSortElement.appendChild(parentItemColor)
     })
 }
-creatSortByProduct()
-
-// lay link web 
-const pathName = window.location.pathname
+creatSortByProduct(pathName)
 
 async function getCurrentDataForPage(url) {
     const listProductElement = document.querySelector(".list-product")
@@ -424,7 +454,7 @@ async function getCurrentDataForPage(url) {
             const pElement = document.createElement("p")
             pElement.textContent = product.price + " VND"
             const aElement = document.createElement("a")
-            aElement.href = product.link
+            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
             aElement.textContent = "Mua ngay"
             cardElement.appendChild(imageElement)
             cardElement.appendChild(h3Element)
@@ -445,7 +475,7 @@ async function getCurrentDataForPage(url) {
             const pElement = document.createElement("p")
             pElement.textContent = product.price + " VND"
             const aElement = document.createElement("a")
-            aElement.href = product.link
+            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
             aElement.textContent = "Mua ngay"
             cardElement.appendChild(imageElement)
             cardElement.appendChild(h3Element)
@@ -466,7 +496,7 @@ async function getCurrentDataForPage(url) {
             const pElement = document.createElement("p")
             pElement.textContent = product.price + " VND"
             const aElement = document.createElement("a")
-            aElement.href = product.link
+            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
             aElement.textContent = "Mua ngay"
             cardElement.appendChild(imageElement)
             cardElement.appendChild(h3Element)
@@ -475,7 +505,219 @@ async function getCurrentDataForPage(url) {
             listProductElement.appendChild(cardElement)
         })
     }
-    
 }
 getCurrentDataForPage(pathName) 
+
+const fullUrl = window.location.href
+
+// lay du lieu trong localStorage
+function getCart(){
+    const cart = JSON.parse(localStorage.getItem('cart')) || []
+    return cart
+}
+
+// trang infor product
+async function getInfoProductPage(fullUrl, pathName) {
+    if (pathName !== "/product/info.html") return 
+    const data = await getAllData()
+    const urlObj = new URL(fullUrl);
+    const nameParam = urlObj.searchParams.get('name');
+    const product = data.find(c => textToSlug(c.name) === nameParam)
+
+    const nameProductElement = document.querySelector(".name-product")
+    nameProductElement.textContent = product.name
+
+    const priceProductElement = document.querySelector(".price-product")
+    priceProductElement.textContent = product.price + " VND"
+
+    const contentDescriptionElement = document.querySelector(".content-description")
+    contentDescriptionElement.textContent = product.description
+
+    const swiperWrapperElement = document.querySelector(".swiper-wrapper")
+    product.image.forEach((image) => {
+        const swiperSlideElement = document.createElement("div")
+        swiperSlideElement.className = "swiper-slide slide-info"
+        const imgElement = document.createElement("img")
+        imgElement.src = image.image_url
+        swiperSlideElement.appendChild(imgElement)
+        swiperWrapperElement.appendChild(swiperSlideElement)
+    })
+
+    const infoProductColorElement = document.querySelector("#info-product-color")
+    product.color.forEach((color) => {
+        const parentItemColor = document.createElement("div")
+        parentItemColor.className = "parent-item-sort"
+        const inputElement = document.createElement("input")
+        inputElement.type = "radio"
+        inputElement.name = "color"
+        inputElement.id = color.id
+        inputElement.value = color.id
+        parentItemColor.appendChild(inputElement)
+        const pElement = document.createElement("p")
+        pElement.textContent = color.name
+        parentItemColor.appendChild(pElement)
+        infoProductColorElement.appendChild(parentItemColor)
+    })
+
+    const infoProductSizeElement = document.querySelector("#info-product-size")
+    product.size.forEach((size) => {
+        const parentItemSize = document.createElement("div")
+        parentItemSize.className = "parent-item-sort"
+        const inputElement = document.createElement("input")
+        inputElement.type = "radio"
+        inputElement.name = "size"
+        inputElement.id = size.id
+        inputElement.value = size.id
+        parentItemSize.appendChild(inputElement)
+        const pElement = document.createElement("p")
+        pElement.textContent = size.name
+        parentItemSize.appendChild(pElement)
+        infoProductSizeElement.appendChild(parentItemSize)
+    })
+
+    function addToCart(id, name, image, price, color_id, size_id, number){
+        const cart = getCart()
+        const indexProductCart = cart.findIndex(product => product.id === id && product.color_id === color_id && product.size_id === size_id)
+        if(indexProductCart!== -1) {
+            cart[indexProductCart].number = Number(cart[indexProductCart].number) + Number(number);
+        } else {
+            cart.push({id, name, image, price, color_id, size_id, number})
+        }
+        localStorage.setItem('cart', JSON.stringify(cart))
+        console.log(cart)
+        alert('Đã thêm vào giỏ hàng')  
+    }
+
+    const buttonElement = document.querySelector(".button-cart")
+    buttonElement.addEventListener("click", () => {
+        const colorSelected = document.querySelector('input[name="color"]:checked')
+        const sizeSelected = document.querySelector('input[name="size"]:checked')
+        const numberSelected = document.querySelector('input[name="number"]:checked')
+        if(!colorSelected ||!sizeSelected ||!numberSelected) {
+            alert('Vui lòng chọn màu, size và số lượng')
+            return
+        }
+        const productCart = {
+            id: product.id,
+            name: product.name,
+            image: product.image[0].image_url,
+            price: product.price,
+            color_id: colorSelected.value,
+            size_id: sizeSelected.value,
+            number: numberSelected.value
+        }
+
+        addToCart(productCart.id, productCart.name, productCart.image, productCart.price, productCart.color_id, productCart.size_id, productCart.number)
+    })
+}
+getInfoProductPage(fullUrl, pathName) 
+
+// lay du lieu ra trang cart.html
+function getCartPage(pathName) {
+    if (pathName !== "/pages/cart.html") return 
+    const cart = getCart()
+    
+    const listCartElement = document.querySelector('.list-cart')
+    cart.forEach(item => {
+        const cartItemElement = document.createElement("div")
+        cartItemElement.className = "cart-item"
+        const imageElement = document.createElement("img")
+        imageElement.src = item.image
+        const nameCartProductElement = document.createElement("p")
+        nameCartProductElement.textContent = item.name
+        const priceCartProductElement = document.createElement("p")
+        priceCartProductElement.textContent = item.price + " VND"
+        const inputElement = document.createElement("input")
+        inputElement.type = "number"
+        inputElement.name = "number"
+        inputElement.value = item.number
+        inputElement.min = "1"
+        inputElement.max = "5"
+        inputElement.step = "1"
+        const buttonElement = document.createElement("button")
+        buttonElement.id = "remove"
+        buttonElement.className = "remove"
+        buttonElement.innerHTML = '<i class="fas fa-trash fa-2x"></i>'
+        buttonElement.addEventListener("click", () => {
+            const index = cart.findIndex(product => product.id === item.id && product.color_id === item.color_id && product.size_id === item.size_id)
+            cart.splice(index, 1)
+            localStorage.setItem('cart', JSON.stringify(cart))
+            location.reload()
+        })
+
+        cartItemElement.appendChild(imageElement)
+        cartItemElement.appendChild(nameCartProductElement)
+        cartItemElement.appendChild(priceCartProductElement)
+        cartItemElement.appendChild(inputElement)
+        cartItemElement.appendChild(buttonElement)
+        listCartElement.appendChild(cartItemElement)
+    })
+    const totalsElement = document.querySelector(".totals")
+    const totalPrice = cart.reduce((total, product) => total + product.price * product.number, 0)
+    totalsElement.textContent = "Tổng tiền: "+totalPrice +".000 VNĐ"
+}
+getCartPage(pathName)
+
+function getCheckOutPage(pathName) {
+    if (pathName!== "/pages/checkout.html") return 
+    const cart = getCart()
+    
+    const listProductCheckoutElement = document.querySelector('.product-list')
+    cart.forEach(item => {
+        const ulElement = document.createElement('ul')
+        const liElement = document.createElement('li')
+        liElement.textContent = "SL: " + item.number + " - " + item.name + " - " + Number(item.price) * Number(item.number) + ".000 VND"
+        ulElement.appendChild(liElement)
+        listProductCheckoutElement.appendChild(ulElement)
+    })
+
+    const checkOutFormElement = document.getElementById('checkoutForm')
+    checkOutFormElement.addEventListener('submit', function(event) {
+        event.preventDefault(); // Ngăn hành vi submit mặc định của form
+
+        // Lấy dữ liệu từ form
+        const name = document.getElementById('name').value;
+        const address = document.getElementById('address').value;
+        const phone = document.getElementById('phone').value;
+        const paymentMethod = document.getElementById('payment-method').value;
+        const status = document.getElementById('status').value;
+        const total = document.getElementById('total').value;
+
+        // Tạo object chứa dữ liệu
+        const checkoutData = {
+            name: name,
+            address: address,
+            phone: phone,
+            payment_method: paymentMethod,
+            status: status,
+            total_price: total,
+            products: cart.map(cartProduct => {
+                return {
+                    product_id: cartProduct.id,
+                    quantity: Number(cartProduct.number),
+                    total_price: Number(cartProduct.price),
+                }
+            })
+        };
+
+        console.log('Checkout Data:', checkoutData);
+        fetch("https://script.google.com/macros/s/AKfycbyeHdu9AIhpoORaxLfdvLPeRWfJYdfB22wfAnpASouFN9goQ5JtWJdMaaPD02nuLbw/exec", {
+            method: 'POST',
+            headers: {
+                'Content-Type': "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(checkoutData),
+        }).then(response => {
+            if (!response.ok){
+                throw new Error('HTTP error!')
+            }
+            return response.json()
+        }).then(result => {
+            console.log(result)
+        }).catch(error => {
+            console.error('Error:', error)
+        })
+    });
+}
+getCheckOutPage(pathName)
 
