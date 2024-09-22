@@ -7,7 +7,7 @@ function textToSlug(text) {
         .trim()
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
-        .replace(/^-+|-+$/g, ''); 
+        .replace(/^-+|-+$/g, '');
 }
 
 // xử lý trượt ảnh cop từ tài liệu 
@@ -323,16 +323,16 @@ const TABLE_PRODUCT_COLOR = "table_product_color!A1:C200"
 const TABLE_COLOR = "table_color!A1:C200"
 const TABLE_SIZE = "table_size!A1:B200"
 
-async function formatSheetData(url){
+async function formatSheetData(url) {
     try {
         const response = await fetch(url);
         const data = await response.json();
-        const [columns,...rows] = data.values;
-        const mapData = rows.map(row =>{
-            return columns.reduce((acc, column,index) =>{
+        const [columns, ...rows] = data.values;
+        const mapData = rows.map(row => {
+            return columns.reduce((acc, column, index) => {
                 acc[column] = row[index] !== undefined ? row[index] : null;
                 return acc;
-            },{});
+            }, {});
         })
         return mapData;
     } catch (error) {
@@ -390,7 +390,19 @@ async function getAllData() {
 }
 
 // lay link web 
+
 const pathName = window.location.pathname
+
+// cập nhật đườn dẫn url 
+function updateQueryString(key, value) {
+    const url = new URL(window.location);
+    if (value) {
+        url.searchParams.set(key, value);
+    } else {
+        url.searchParams.delete(key);
+    }
+    window.history.pushState({}, "", url);
+}
 
 // tao sort by
 async function creatSortByProduct(pathName) {
@@ -401,7 +413,7 @@ async function creatSortByProduct(pathName) {
 
     const sizeData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`)
     const colorData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`)
-    
+
     sizeData.forEach((size) => {
         const parentItemSize = document.createElement("div")
         parentItemSize.className = "parent-item-sort"
@@ -410,7 +422,11 @@ async function creatSortByProduct(pathName) {
         inputElement.name = "size"
         inputElement.id = size.id
         inputElement.value = size.name
-        parentItemSize.appendChild(inputElement)
+        inputElement.addEventListener("change", () => {
+            updateQueryString("size", size.id)
+            location.reload()
+        }),
+            parentItemSize.appendChild(inputElement)
 
         const pElement = document.createElement("p")
         pElement.textContent = size.name
@@ -427,7 +443,11 @@ async function creatSortByProduct(pathName) {
         inputElement.name = "color"
         inputElement.id = color.id
         inputElement.value = color.name
-        parentItemColor.appendChild(inputElement)
+        inputElement.addEventListener("change", () => {
+            updateQueryString("color", color.id)
+            location.reload()
+        }),
+            parentItemColor.appendChild(inputElement)
 
         const pElement = document.createElement("p")
         pElement.textContent = color.name
@@ -435,90 +455,96 @@ async function creatSortByProduct(pathName) {
 
         colorSortElement.appendChild(parentItemColor)
     })
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedSize = urlParams.get("size");
+    const selectedColor = urlParams.get("color");
+
+    if (selectedSize) {
+        const selectedSizeInput = document.querySelector(
+            `input[name="size"][id="${selectedSize}"]`
+        );
+        if (selectedSizeInput) {
+            selectedSizeInput.checked = true;
+        }
+    }
+    if (selectedColor) {
+        const selectedColorInput = document.querySelector(
+            `input[name="color"][id="${selectedColor}"]`
+        );
+        if (selectedColorInput) {
+            selectedColorInput.checked = true;
+        }
+    }
 }
-creatSortByProduct(pathName)
 
 async function getCurrentDataForPage(url) {
     const listProductElement = document.querySelector(".list-product")
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedSize = urlParams.get("size");
+    const selectedColor = urlParams.get("color");
 
-    if (url === "/pages/men.html") {
-        const data = await getAllData()
-        const menData = data.filter(c => c.type === "men")
-        menData.forEach((product) => {
-            const cardElement = document.createElement("div")
-            cardElement.className = "card"
-            const imageElement = document.createElement("img")
-            imageElement.src = product.image[0].image_url
-            const h3Element = document.createElement("h3")
-            h3Element.textContent = product.name
-            const pElement = document.createElement("p")
-            pElement.textContent = product.price + " VND"
-            const aElement = document.createElement("a")
-            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
-            aElement.textContent = "Mua ngay"
-            cardElement.appendChild(imageElement)
-            cardElement.appendChild(h3Element)
-            cardElement.appendChild(pElement)
-            cardElement.appendChild(aElement)
-            listProductElement.appendChild(cardElement)
-        })
-    } else if (url === "/pages/women.html") {
-        const data = await getAllData()
-        const womenData = data.filter(c => c.type === "women")
-        womenData.forEach((product) => {
-            const cardElement = document.createElement("div")
-            cardElement.className = "card"
-            const imageElement = document.createElement("img")
-            imageElement.src = product.image[0].image_url
-            const h3Element = document.createElement("h3")
-            h3Element.textContent = product.name
-            const pElement = document.createElement("p")
-            pElement.textContent = product.price + " VND"
-            const aElement = document.createElement("a")
-            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
-            aElement.textContent = "Mua ngay"
-            cardElement.appendChild(imageElement)
-            cardElement.appendChild(h3Element)
-            cardElement.appendChild(pElement)
-            cardElement.appendChild(aElement)
-            listProductElement.appendChild(cardElement)
-        })
-    } else if (url === "/pages/baby.html") {
-        const data = await getAllData()
-        const babyData = data.filter(c => c.type === "baby")
-        babyData.forEach((product) => {
-            const cardElement = document.createElement("div")
-            cardElement.className = "card"
-            const imageElement = document.createElement("img")
-            imageElement.src = product.image[0].image_url
-            const h3Element = document.createElement("h3")
-            h3Element.textContent = product.name
-            const pElement = document.createElement("p")
-            pElement.textContent = product.price + " VND"
-            const aElement = document.createElement("a")
-            aElement.href = "/product/info.html?name=" + textToSlug(product.name)
-            aElement.textContent = "Mua ngay"
-            cardElement.appendChild(imageElement)
-            cardElement.appendChild(h3Element)
-            cardElement.appendChild(pElement)
-            cardElement.appendChild(aElement)
-            listProductElement.appendChild(cardElement)
-        })
+    const data = await getAllData()
+    if (!data) {
+        console.error("Loi khi lấy dữ liệu")
+        return
     }
+
+    let filterData;
+    if (url === "/pages/men.html") {
+        filterData = data.filter(c => c.type === "men")
+    } else if (url === "/pages/women.html") {
+        filterData = data.filter(c => c.type === "women")
+    } else if (url === "/pages/baby.html") {
+        filterData = data.filter(c => c.type === "baby")
+    }
+
+    if (selectedColor) {
+        filterData = filterData.filter(c => c.color.some(color => color.id === selectedColor))
+    } 
+    if (selectedSize) {
+        filterData = filterData.filter(c => c.size.some(size => size.id === selectedSize))
+    }
+
+
+    filterData.forEach((product) => {
+        const cardElement = document.createElement("div")
+        cardElement.className = "card"
+        const imageElement = document.createElement("img")
+        imageElement.src = product.image[0].image_url
+        const h3Element = document.createElement("h3")
+        h3Element.textContent = product.name
+        const pElement = document.createElement("p")
+        pElement.textContent = product.price + " VND"
+        const aElement = document.createElement("a")
+        aElement.href = "/product/info.html?name=" + textToSlug(product.name)
+        aElement.textContent = "Mua ngay"
+        cardElement.appendChild(imageElement)
+        cardElement.appendChild(h3Element)
+        cardElement.appendChild(pElement)
+        cardElement.appendChild(aElement)
+        listProductElement.appendChild(cardElement)
+    })
 }
-getCurrentDataForPage(pathName) 
+creatSortByProduct(pathName)
+getCurrentDataForPage(pathName)
 
 const fullUrl = window.location.href
 
 // lay du lieu trong localStorage
-function getCart(){
+function getCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || []
     return cart
 }
 
+// xoa du lieu trong localStorage
+function removeCart() {
+    localStorage.removeItem('cart')
+}
+
 // trang infor product
 async function getInfoProductPage(fullUrl, pathName) {
-    if (pathName !== "/product/info.html") return 
+    if (pathName !== "/product/info.html") return
     const data = await getAllData()
     const urlObj = new URL(fullUrl);
     const nameParam = urlObj.searchParams.get('name');
@@ -575,17 +601,17 @@ async function getInfoProductPage(fullUrl, pathName) {
         infoProductSizeElement.appendChild(parentItemSize)
     })
 
-    function addToCart(id, name, image, price, color_id, size_id, number){
+    function addToCart(id, name, image, price, color_id, size_id, number) {
         const cart = getCart()
         const indexProductCart = cart.findIndex(product => product.id === id && product.color_id === color_id && product.size_id === size_id)
-        if(indexProductCart!== -1) {
+        if (indexProductCart !== -1) {
             cart[indexProductCart].number = Number(cart[indexProductCart].number) + Number(number);
         } else {
-            cart.push({id, name, image, price, color_id, size_id, number})
+            cart.push({ id, name, image, price, color_id, size_id, number })
         }
         localStorage.setItem('cart', JSON.stringify(cart))
         console.log(cart)
-        alert('Đã thêm vào giỏ hàng')  
+        alert('Đã thêm vào giỏ hàng')
     }
 
     const buttonElement = document.querySelector(".button-cart")
@@ -593,7 +619,7 @@ async function getInfoProductPage(fullUrl, pathName) {
         const colorSelected = document.querySelector('input[name="color"]:checked')
         const sizeSelected = document.querySelector('input[name="size"]:checked')
         const numberSelected = document.querySelector('input[name="number"]:checked')
-        if(!colorSelected ||!sizeSelected ||!numberSelected) {
+        if (!colorSelected || !sizeSelected || !numberSelected) {
             alert('Vui lòng chọn màu, size và số lượng')
             return
         }
@@ -610,13 +636,13 @@ async function getInfoProductPage(fullUrl, pathName) {
         addToCart(productCart.id, productCart.name, productCart.image, productCart.price, productCart.color_id, productCart.size_id, productCart.number)
     })
 }
-getInfoProductPage(fullUrl, pathName) 
+getInfoProductPage(fullUrl, pathName)
 
 // lay du lieu ra trang cart.html
 function getCartPage(pathName) {
-    if (pathName !== "/pages/cart.html") return 
+    if (pathName !== "/pages/cart.html") return
     const cart = getCart()
-    
+
     const listCartElement = document.querySelector('.list-cart')
     cart.forEach(item => {
         const cartItemElement = document.createElement("div")
@@ -626,7 +652,14 @@ function getCartPage(pathName) {
         const nameCartProductElement = document.createElement("p")
         nameCartProductElement.textContent = item.name
         const priceCartProductElement = document.createElement("p")
-        priceCartProductElement.textContent = item.price + " VND"
+
+        const formattedPrice = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(Number(item.price.replace(/\./g, "").replace(",", ".")));
+
+        priceCartProductElement.textContent = formattedPrice
+
         const inputElement = document.createElement("input")
         inputElement.type = "number"
         inputElement.name = "number"
@@ -653,26 +686,53 @@ function getCartPage(pathName) {
         listCartElement.appendChild(cartItemElement)
     })
     const totalsElement = document.querySelector(".totals")
-    const totalPrice = cart.reduce((total, product) => total + product.price * product.number, 0)
-    totalsElement.textContent = "Tổng tiền: "+totalPrice +".000 VNĐ"
+
+    const totalPrice = cart.reduce((total, product) => {
+        const price = Number(product.price.replace(/\./g, "").replace(",", "."));
+        return total + price * Number(product.number);
+    }, 0);
+
+    const formattedPrice = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    }).format(totalPrice);
+
+    totalsElement.textContent = "Tổng tiền: " + formattedPrice
 }
 getCartPage(pathName)
 
 function getCheckOutPage(pathName) {
-    if (pathName!== "/pages/checkout.html") return 
+    if (pathName !== "/pages/checkout.html") return
     const cart = getCart()
-    
+
+    const totalAmountElement = document.querySelector("#total");
+    const totalPrice = cart.reduce((total, product) => {
+        const price = Number(product.price.replace(/\./g, "").replace(",", "."));
+        return total + price * Number(product.number);
+    }, 0);
+    const formattedPrice = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    }).format(totalPrice);
+    totalAmountElement.value = formattedPrice;
+
     const listProductCheckoutElement = document.querySelector('.product-list')
     cart.forEach(item => {
         const ulElement = document.createElement('ul')
         const liElement = document.createElement('li')
-        liElement.textContent = "SL: " + item.number + " - " + item.name + " - " + Number(item.price) * Number(item.number) + ".000 VND"
+
+        const formattedPrice = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(Number(item.price.replace(/\./g, "").replace(",", ".")) * Number(item.number));
+
+        liElement.textContent = "SL: " + item.number + " - " + item.name + " - " + formattedPrice
         ulElement.appendChild(liElement)
         listProductCheckoutElement.appendChild(ulElement)
     })
 
     const checkOutFormElement = document.getElementById('checkoutForm')
-    checkOutFormElement.addEventListener('submit', function(event) {
+    checkOutFormElement.addEventListener('submit', function (event) {
         event.preventDefault(); // Ngăn hành vi submit mặc định của form
 
         // Lấy dữ liệu từ form
@@ -689,7 +749,7 @@ function getCheckOutPage(pathName) {
             address: address,
             phone: phone,
             payment_method: paymentMethod,
-            status: status,
+            status: 0,
             total_price: total,
             products: cart.map(cartProduct => {
                 return {
@@ -700,15 +760,18 @@ function getCheckOutPage(pathName) {
             })
         };
 
+        // Gửi dữ liệu đến Google Sheets API 
         console.log('Checkout Data:', checkoutData);
-        fetch("https://script.google.com/macros/s/AKfycbyeHdu9AIhpoORaxLfdvLPeRWfJYdfB22wfAnpASouFN9goQ5JtWJdMaaPD02nuLbw/exec", {
-            method: 'POST',
+        fetch("https://script.google.com/macros/s/AKfycbwWN7KJpmg13YLleJvEMJdC_838IhzNZrCjCRN0EjX6I72MeY8s4F6WiPBoHiHVxg/exec", {
+            redirect: "follow",
+            mode: "no-cors",
+            method: "POST",
             headers: {
-                'Content-Type': "text/plain;charset=utf-8",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(checkoutData),
         }).then(response => {
-            if (!response.ok){
+            if (!response.ok) {
                 throw new Error('HTTP error!')
             }
             return response.json()
@@ -717,6 +780,12 @@ function getCheckOutPage(pathName) {
         }).catch(error => {
             console.error('Error:', error)
         })
+
+        removeCart()
+
+        checkOutFormElement.reset()
+
+        alert('Đã đặt hàng thành công, vui lòng check email để xác nhận đơn hàng')
     });
 }
 getCheckOutPage(pathName)
