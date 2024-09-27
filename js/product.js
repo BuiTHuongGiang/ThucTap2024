@@ -31,25 +31,52 @@ async function formatSheetData(url) {
             }, {});
         })
         return mapData;
-    } catch (error) {
-    }
+    } catch (error) { }
 }
 
 async function getAllData() {
     try {
         // Gọi tất cả API song song bằng Promise.all
-        const [productData, productImageData, productSizeData, productColorData, sizeData, colorData, customerData] = await Promise.all([
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_IMAGE}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_SIZE}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_COLOR}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`),
-            formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_CUSTOMER_PRODUCT}?key=${API_KEY}`)
+        const [
+            productData,
+            productImageData,
+            productSizeData,
+            productColorData,
+            sizeData,
+            colorData,
+        ] = await Promise.all([
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_IMAGE}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_SIZE}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_COLOR}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_CUSTOMER_PRODUCT}?key=${API_KEY}`
+            ),
         ]);
 
         // Kiểm tra xem dữ liệu có hợp lệ trước khi xử lý
-        if (!productData || !productColorData || !colorData || !productSizeData || !sizeData || !productImageData) {
+        if (
+            !productData ||
+            !productColorData ||
+            !colorData ||
+            !productSizeData ||
+            !sizeData ||
+            !productImageData
+        ) {
             throw new Error('Dữ liệu trả về từ API bị lỗi hoặc rỗng');
         }
 
@@ -96,57 +123,108 @@ function updateQueryString(key, value) {
     window.history.pushState({}, "", url);
 }
 
+function showSkeleton(container, count, type) {
+    for (let i = 0; i < count; i++) {
+        const parentItemSkeleton = document.createElement("div");
+
+        if (type === "sort") {
+            parentItemSkeleton.className = "parent-item-sort";
+
+            const skeletonInput = document.createElement("div");
+            skeletonInput.className = "skeleton skeleton-input";
+            parentItemSkeleton.appendChild(skeletonInput);
+
+            const skeletonText = document.createElement("div");
+            skeletonText.className = "skeleton skeleton-text";
+            parentItemSkeleton.appendChild(skeletonText);
+        } else if (type === "card") {
+            parentItemSkeleton.className = "skeleton-card";
+
+            const skeletonImage = document.createElement("div");
+            skeletonImage.className = "skeleton skeleton-card-image";
+            parentItemSkeleton.appendChild(skeletonImage);
+
+            const skeletonTitle = document.createElement("div");
+            skeletonTitle.className = "skeleton skeleton-card-title";
+            parentItemSkeleton.appendChild(skeletonTitle);
+
+            const skeletonPrice = document.createElement("div");
+            skeletonPrice.className = "skeleton skeleton-card-price";
+            parentItemSkeleton.appendChild(skeletonPrice);
+
+            const skeletonDescription = document.createElement("div");
+            skeletonDescription.className = "skeleton skeleton-card-description";
+            parentItemSkeleton.appendChild(skeletonDescription);
+        }
+
+        container.appendChild(parentItemSkeleton);
+    }
+}
 // tao sort by
 async function creatSortByProduct(pathName) {
-    const validPaths = ['/pages/women.html', '/pages/men.html', '/pages/baby.html'];
-    if (!validPaths.includes(pathName)) return
+    const validPaths = [
+        "/pages/women.html",
+        "/pages/men.html",
+        "/pages/baby.html",
+    ];
+    if (!validPaths.includes(pathName)) return;
     const sizeSortElement = document.querySelector("#size-sort");
     const colorSortElement = document.querySelector("#color-sort");
 
-    const sizeData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`)
-    const colorData = await formatSheetData(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`)
+    showSkeleton(sizeSortElement, 5, "sort");
+    showSkeleton(colorSortElement, 5, "sort");
+
+    const sizeData = await formatSheetData(
+        `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_SIZE}?key=${API_KEY}`
+    );
+    const colorData = await formatSheetData(
+        `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`
+    );
+
+    sizeSortElement.innerHTML = "";
+    colorSortElement.innerHTML = "";
 
     sizeData.forEach((size) => {
-        const parentItemSize = document.createElement("div")
-        parentItemSize.className = "parent-item-sort"
-        const inputElement = document.createElement("input")
-        inputElement.type = "radio"
-        inputElement.name = "size"
-        inputElement.id = size.id
-        inputElement.value = size.name
+        const parentItemSize = document.createElement("div");
+        parentItemSize.className = "parent-item-sort";
+        const inputElement = document.createElement("input");
+        inputElement.type = "radio";
+        inputElement.name = "size";
+        inputElement.id = size.id;
+        inputElement.value = size.name;
         inputElement.addEventListener("change", () => {
-            updateQueryString("size", size.id)
-            location.reload()
+            updateQueryString("size", size.id);
+            location.reload();
         }),
-            parentItemSize.appendChild(inputElement)
+            parentItemSize.appendChild(inputElement);
 
-        const pElement = document.createElement("p")
-        pElement.textContent = size.name
-        parentItemSize.appendChild(pElement)
+        const pElement = document.createElement("p");
+        pElement.textContent = size.name;
+        parentItemSize.appendChild(pElement);
 
-        sizeSortElement.appendChild(parentItemSize)
-    })
+        sizeSortElement.appendChild(parentItemSize);
+    });
 
     colorData.forEach((color) => {
-        const parentItemColor = document.createElement("div")
-        parentItemColor.className = "parent-item-sort"
-        const inputElement = document.createElement("input")
-        inputElement.type = "radio"
-        inputElement.name = "color"
-        inputElement.id = color.id
-        inputElement.value = color.name
+        const parentItemColor = document.createElement("div");
+        parentItemColor.className = "parent-item-sort";
+        const inputElement = document.createElement("input");
+        inputElement.type = "radio";
+        inputElement.name = "color";
+        inputElement.id = color.id;
+        inputElement.value = color.name;
         inputElement.addEventListener("change", () => {
-            updateQueryString("color", color.id)
-            location.reload()
+            updateQueryString("color", color.id);
+            location.reload();
         }),
-            parentItemColor.appendChild(inputElement)
+            parentItemColor.appendChild(inputElement);
 
-        const pElement = document.createElement("p")
-        pElement.textContent = color.name
-        parentItemColor.appendChild(pElement)
+        const pElement = document.createElement("p");
+        pElement.textContent = color.name;
+        parentItemColor.appendChild(pElement);
 
-        colorSortElement.appendChild(parentItemColor)
-    })
+        colorSortElement.appendChild(parentItemColor);
+    });
 
     const urlParams = new URLSearchParams(window.location.search);
     const selectedSize = urlParams.get("size");
@@ -171,55 +249,128 @@ async function creatSortByProduct(pathName) {
 }
 
 async function getCurrentDataForPage(url) {
-    const listProductElement = document.querySelector(".list-product")
+    const listProductElement = document.querySelector(".list-product");
     const urlParams = new URLSearchParams(window.location.search);
     const selectedSize = urlParams.get("size");
     const selectedColor = urlParams.get("color");
 
-    const data = await getAllData()
+    showSkeleton(listProductElement, 5, "card");
+    const data = await getAllData();
+    listProductElement.innerHTML = "";
+
     if (!data) {
-        console.error("Loi khi lấy dữ liệu")
-        return
+        console.error("Loi khi lấy dữ liệu");
+        return;
     }
 
     let filterData;
+
+    const userResponses = JSON.parse(localStorage.getItem("userResponses"));
+
     if (url === "/pages/men.html") {
-        filterData = data.filter(c => c.type === "men")
+        filterData = data.filter((c) => c.type === "men");
     } else if (url === "/pages/women.html") {
-        filterData = data.filter(c => c.type === "women")
+        filterData = data.filter((c) => c.type === "women");
     } else if (url === "/pages/baby.html") {
-        filterData = data.filter(c => c.type === "baby")
+        filterData = data.filter((c) => c.type === "baby");
+    }
+    if (userResponses) {
+        let matchedProducts = [];
+        let otherProducts = [];
+        const matchedProductIds = new Set();
+
+        Object.entries(userResponses).forEach(([key, value]) => {
+            if (value) {
+                filterData.forEach((product) => {
+                    let shouldAdd = false;
+
+                    if (key === "color" && product.color.some((c) => c.id === value)) {
+                        shouldAdd = true;
+                    } else if (key === "gender" && product.gender === value) {
+                        shouldAdd = true;
+                    } else if (key === "age" && product.ageGroup === value) {
+                        shouldAdd = true;
+                    }
+
+                    if (shouldAdd && !matchedProductIds.has(product.id)) {
+                        matchedProducts.push(product);
+                        matchedProductIds.add(product.id);
+                    }
+                });
+            }
+        });
+
+        filterData.forEach((product) => {
+            if (!matchedProductIds.has(product.id)) {
+                otherProducts.push(product);
+            }
+        });
+
+        filterData = [...matchedProducts, ...otherProducts];
     }
 
     if (selectedColor) {
-        filterData = filterData.filter(c => c.color.some(color => color.id === selectedColor))
-    } 
+        filterData = filterData.filter((c) =>
+            c.color.some((color) => color.id === selectedColor)
+        );
+    }
     if (selectedSize) {
-        filterData = filterData.filter(c => c.size.some(size => size.id === selectedSize))
+        filterData = filterData.filter((c) =>
+            c.size.some((size) => size.id === selectedSize)
+        );
     }
 
+    if (filterData.length === 0) {
+        const noProductElement = document.createElement("div");
+        noProductElement.className = "no-product";
+        noProductElement.textContent = "Không tồn tại sản phẩm nào";
+        listProductElement.appendChild(noProductElement);
+        return;
+    }
 
     filterData.forEach((product) => {
-        const cardElement = document.createElement("div")
-        cardElement.className = "card"
-        const imageElement = document.createElement("img")
-        imageElement.src = product.image[0].image_url
-        const h3Element = document.createElement("h3")
-        h3Element.textContent = product.name
-        const pElement = document.createElement("p")
-        pElement.textContent = product.price + " VND"
-        const aElement = document.createElement("a")
-        aElement.href = "/product/info.html?name=" + textToSlug(product.name)
-        aElement.textContent = "Mua ngay"
-        cardElement.appendChild(imageElement)
-        cardElement.appendChild(h3Element)
-        cardElement.appendChild(pElement)
-        cardElement.appendChild(aElement)
-        listProductElement.appendChild(cardElement)
-    })
+        const cardElement = document.createElement("div");
+        cardElement.className = "card";
+        const imageElement = document.createElement("img");
+        imageElement.src = product.image[0].image_url;
+        const h3Element = document.createElement("h3");
+        //Thuanfix
+        if (product.name.length > 30)
+            h3Element.textContent = product.name.substring(0, 30) + "...";
+        else h3Element.textContent = product.name;
+        const pElement = document.createElement("p");
+        pElement.textContent = product.price + " VND";
+        const aElement = document.createElement("a");
+        aElement.href = "/product/info.html?name=" + textToSlug(product.name);
+        aElement.textContent = "Mua ngay";
+        cardElement.appendChild(imageElement);
+        cardElement.appendChild(h3Element);
+        cardElement.appendChild(pElement);
+        cardElement.appendChild(aElement);
+        listProductElement.appendChild(cardElement);
+    });
 }
 creatSortByProduct(pathName)
 getCurrentDataForPage(pathName)
+
+function addToCart(id, name, image, price, color_id, size_id, number) {
+    const cart = getCart();
+    const indexProductCart = cart.findIndex(
+        (product) =>
+            product.id === id &&
+            product.color_id === color_id &&
+            product.size_id === size_id
+    );
+    if (indexProductCart !== -1) {
+        cart[indexProductCart].number =
+            Number(cart[indexProductCart].number) + Number(number);
+    } else {
+        cart.push({ id, name, image, price, color_id, size_id, number });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log(cart);
+    alert("Đã thêm vào giỏ hàng");
+}
 
 // trang infor product
 async function getInfoProductPage(fullUrl, pathName) {

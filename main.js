@@ -23,17 +23,7 @@ const swiper = new Swiper('.swiper', {
         clickable: true,
     }
 });
-// Nếu kéo xuống 0.01 trên trục y thì đổi màu nền menu
-const headerElement = document.getElementById("menu");
-window.addEventListener("scroll", (event) => {
-    const scrollPosition = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    console.log(event)
-    if (scrollPosition > 0.01) {
-        headerElement.style.backgroundColor = "white";
-    } else {
-        headerElement.style.backgroundColor = "";
-    }
-});
+
 // xử lý menu 
 const menu = [
     {
@@ -66,35 +56,36 @@ const menu = [
 const menuElement = document.getElementById("navbar-component");
 function getMenu() {
     const navElement = document.createElement("nav");
+    navElement.classList.add("nav-list");
+    navElement.style.transition = "all 1s ease-out";
     const ulElement = document.createElement("ul");
     // xử lý, lặp qua các phần tử từ trong mảng từ đầu đến cuối
-    menu.forEach(item => {
+    menu.forEach((item) => {
         // tạo thành phần li, thêm class primary-nav hoặc secondary-nav
         const liElement = document.createElement("li");
         const aElement = document.createElement("a");
 
         // nếu href của item là AMEE thì thêm class primary-nav, ngược lại thêm secondary-nav
         if (item.href === "/index") {
-            liElement.classList.add("primary-nav")
+            liElement.classList.add("primary-nav");
 
-            const logoElement = document.createElement("img")
-            logoElement.src = "../images/icon/icon_shop.png"
-            logoElement.alt = "logo"
+            const logoElement = document.createElement("img");
+            logoElement.src = "../images/icon/icon_shop.png";
+            logoElement.alt = "logo";
 
             liElement.appendChild(logoElement);
         } else {
-            liElement.classList.add("secondary-nav")
+            liElement.classList.add("secondary-nav");
             if (item.href === "/pages/cart") {
-                const iconCartElement = document.createElement("i")
-                iconCartElement.classList.add("fas", "fa-shopping-cart")
-                iconCartElement.style.cursor = "pointer"
-                iconCartElement.addEventListener("click", () =>{
-                    window.open(item.href+".html");
-                })
+                const iconCartElement = document.createElement("i");
+                iconCartElement.classList.add("fas", "fa-shopping-cart");
+                iconCartElement.style.cursor = "pointer";
+                iconCartElement.addEventListener("click", () => {
+                    window.open(item.href + ".html");
+                });
                 liElement.appendChild(iconCartElement);
             }
         }
-
 
         // đặt href của aElement thành href của item, hiển thị nội dung của item ở đó
         aElement.href = item.href + ".html";
@@ -105,10 +96,9 @@ function getMenu() {
         ulElement.appendChild(liElement);
         navElement.appendChild(ulElement);
         menuElement.appendChild(navElement);
-
-    })
+    });
 }
-getMenu()
+getMenu();
 
 //hien thi menu mobile
 function getMenuMobile() {
@@ -179,6 +169,28 @@ function getMenuMobile() {
     iconMenuMobileElement.addEventListener("click", toggleMenuMobile);
 }
 getMenuMobile()
+
+// Nếu kéo xuống 0.01 trên trục y thì đổi màu nền menu
+document.body.addEventListener("scroll", () => {
+    const navListElement = document.querySelector(".nav-list");
+    const scrollPosition =
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+    if (scrollPosition > 100) {
+        navListElement.style.backgroundColor = "white";
+    } else {
+        navListElement.style.backgroundColor = "";
+    }
+});
+
+//Back button
+const backButton = document.querySelector(".icon-back");
+backButton.addEventListener("click", () => {
+    window.location.href = "/index.html";
+});
 
 // hien thi footer
 const footer = {

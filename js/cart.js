@@ -45,7 +45,7 @@ function getCartPage(pathName) {
         const formattedPrice = new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-        }).format(Number(item.price.replace(/\./g, "").replace(",", ".")));
+        }).format(Number(item.price.replace(/\./g, "").replace(",", ".")) * item.number);
 
         priceCartProductElement.textContent = formattedPrice
 
@@ -56,6 +56,23 @@ function getCartPage(pathName) {
         inputElement.min = "1"
         inputElement.max = "5"
         inputElement.step = "1"
+        inputElement.addEventListener("input", () => {
+            const quantity = parseInt(inputElement.value, 10);
+            const index = cart.findIndex(product => product.id === item.id && product.color_id === item.color_id && product.size_id === item.size_id);
+
+            if (index !== -1) {
+                cart[index].number = quantity;
+                const formattedPrice = new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                }).format(Number(item.price.replace(/\./g, "").replace("₫", "").trim()) * cart[index].number);
+
+                priceCartProductElement.textContent = formattedPrice;
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+        });
+
         const buttonElement = document.createElement("button")
         buttonElement.id = "remove"
         buttonElement.className = "remove"
@@ -82,11 +99,11 @@ function getCartPage(pathName) {
             alert("Vui lòng chọn sản phẩm")
         }
     })
+    window.reload()
     const checkBoxes = document.querySelectorAll(".list-cart input[type='checkbox']")
     checkBoxes.forEach(checkbox => {
         checkbox.checked = false
     })
-    window.reload()
     const totalsElement = document.querySelector(".totals")
 
     const totalPrice = cart.reduce((total, product) => {

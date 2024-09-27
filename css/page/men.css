@@ -55,7 +55,18 @@ img {
 
 .card>h3 {
     margin: 0;
-    padding: 0;
+    padding: 5;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box; /* Sử dụng Flexbox dạng khối */
+    -webkit-line-clamp: 2; /* Giới hạn số dòng hiển thị */
+    -webkit-box-orient: vertical; /* Định hướng các khối Flex */
+    line-height: 1.2em; /* Chiều cao dòng */
+    max-height: 2.4em; /* Đảm bảo đủ chiều cao cho 2 dòng */
+    box-sizing: border-box;
+    word-wrap: break-word; /* Tự động xuống dòng nếu cần */
 }
 
 .card>p {
