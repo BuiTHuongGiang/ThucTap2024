@@ -1,3 +1,45 @@
+
+const searchResults = document.getElementById('searchResults');
+function postSearchData(inputValue) {
+    console.log(inputValue);
+    fetch('https://script.google.com/macros/s/AKfycbwRnaionrtIqjVTlp4Hyumgb9gN3ItHCytxRWZnw4Np5REsLnLP5C1A9kmMoubq7Ko/exec', { // Replace with your actual API endpoint
+        redirect: "follow",
+        mode: "no-cors",
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'search', name: inputValue })
+    }).then(response => {
+            console.log(response);
+            return response.json()
+        }).then(data => {
+            console.log('Success:', data);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+function displaySearchResults(results) {
+    searchResults.innerHTML = ''; // Clear any existing results
+
+    if (results.length === 0) {
+        searchResults.innerHTML = '<p>No results found</p>'; // Handle case where no results are found
+        return;
+    }
+
+    // Map through the results and create elements to display them
+    results.map(result => {
+        const resultItem = document.createElement('div');
+        resultItem.classList.add('result-item');
+        resultItem.innerHTML = `
+            <h3>${result.title}</h3>
+            <p>${result.description}</p>
+        `;
+        searchResults.appendChild(resultItem);
+    });
+}
+
 // xu ly link 
 function textToSlug(text) {
     return text
@@ -30,9 +72,14 @@ const menu = [
         label: "AMEE",
         href: "/index",
     },
+
     {
         label: "",
         href: "/pages/cart",
+    },
+    {
+        label: "",
+        href: "/pages/search",
     },
     {
         label: "MEN",
@@ -76,7 +123,32 @@ function getMenu() {
             liElement.appendChild(logoElement);
         } else {
             liElement.classList.add("secondary-nav");
-            if (item.href === "/pages/cart") {
+            if (item.href === "/pages/search") {
+                const iconSearchElement = document.createElement("i");
+                iconSearchElement.classList.add("fas", "fa-search");
+                liElement.appendChild(iconSearchElement);
+                // xu ly search
+                const modalElement = document.getElementById('modal-search');
+                const closeModalElement = document.querySelector('.close-search');
+                const searchInput = document.getElementById('searchInput');
+                const searchButton = document.getElementById('searchButton');
+                iconSearchElement.onclick = function () {
+                    modalElement.style.display = 'flex';
+                }
+                window.onclick = function (event) {
+                    if (event.target === modalElement) {
+                        modalElement.style.display = 'none'; 
+                    }
+                }
+                searchButton.addEventListener('click', function() {
+                    const inputValue = searchInput.value; 
+                    if (inputValue) {
+                        postSearchData(inputValue); // Call the function to post data
+                    } else {
+                        alert('Please enter a search term'); // Handle empty input
+                    }
+                });
+            } else if (item.href === "/pages/cart") {
                 const iconCartElement = document.createElement("i");
                 iconCartElement.classList.add("fas", "fa-shopping-cart");
                 iconCartElement.style.cursor = "pointer";
@@ -85,10 +157,11 @@ function getMenu() {
                 });
                 liElement.appendChild(iconCartElement);
             }
+
         }
 
         // đặt href của aElement thành href của item, hiển thị nội dung của item ở đó
-        aElement.href = item.href + ".html";
+        if (item.href !== "/pages/search") aElement.href = item.href + ".html";
 
         aElement.textContent = item.label;
 
@@ -188,9 +261,9 @@ document.body.addEventListener("scroll", () => {
 
 //Back button
 const backButton = document.querySelector(".icon-back");
-backButton.addEventListener("click", () => {
-    window.location.href = "/index.html";
-});
+// backButton.addEventListener("click", () => {
+//     window.location.href = "/index.html";
+// });
 
 // hien thi footer
 const footer = {

@@ -9,6 +9,7 @@
     <link rel="icon" href="images/icon/icon_cart.png" sizes="32x32" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/modal.css" />
     <!-- <link rel="stylesheet" href="css/preloader.css" /> -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
@@ -154,8 +155,28 @@
         <a href="./HTML/survey.html">Click here to take a quick survey</a>
     </h3>
 
+    <div id="suggestion-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2>Hãy cho chúng tôi biết sở thích của bạn!</h2>
+            <div id="quiz"></div>
+            <div id="suggestions"></div>
+        </div>
+    </div>
+    <div id="modal-search" class="modal-search">
+        <div class="modal-search-content">
+            <span class="close-search">&times;</span>
+            <h2>Search</h2>
+            <input type="text" id="searchInput" placeholder="Type something to search...">
+            <button id="searchButton">Search</button>
+            <div id="searchResults"></div>
+        </div>
+    </div>
+
     <footer id="footer"></footer>
     <script defer src="./main.js"></script>
+    <script defer src="./js/modal.js"></script>
+
 </body>
 
 </html>

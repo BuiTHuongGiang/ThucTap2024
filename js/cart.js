@@ -184,7 +184,7 @@ function getCheckOutPage(pathName) {
 
         // Gửi dữ liệu đến Google Sheets API 
         console.log('Checkout Data:', checkoutData);
-        fetch("https://script.google.com/macros/s/AKfycbwWN7KJpmg13YLleJvEMJdC_838IhzNZrCjCRN0EjX6I72MeY8s4F6WiPBoHiHVxg/exec", {
+        fetch("https://script.google.com/macros/s/AKfycbwRnaionrtIqjVTlp4Hyumgb9gN3ItHCytxRWZnw4Np5REsLnLP5C1A9kmMoubq7Ko/exec", {
             redirect: "follow",
             mode: "no-cors",
             method: "POST",
