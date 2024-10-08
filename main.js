@@ -1,59 +1,91 @@
+const searchResults = document.getElementById("searchResults");
 
-const searchResults = document.getElementById('searchResults');
-function postSearchData(inputValue) {
-    console.log(inputValue);
-    fetch('https://script.google.com/macros/s/AKfycbwRnaionrtIqjVTlp4Hyumgb9gN3ItHCytxRWZnw4Np5REsLnLP5C1A9kmMoubq7Ko/exec', { // Replace with your actual API endpoint
-        redirect: "follow",
-        mode: "no-cors",
-        method: "POST",
+function storeUserIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has("user")) {
+        const userId = urlParams.get("user");
+
+        localStorage.setItem("userId", userId);
+        urlParams.delete("user");
+        const newUrl =
+            window.location.protocol +
+            "//" +
+            window.location.host +
+            window.location.pathname +
+            urlParams.toString();
+        window.history.replaceState({ path: newUrl }, "", newUrl);
+    } else {
+        console.log("Không có query parameter 'user' trong URL.");
+    }
+}
+window.onload = storeUserIdFromUrl;
+
+async function getSearchData(inputValue) {
+    const url = `https://script.google.com/macros/s/AKfycbx9UqWJ6KOI4kqKwNN6kJ8sooIqo4sz9Hwe-ZlZdKXaakjznr7JnP8lrpywq3TToWY/exec?name=${encodeURIComponent(
+        inputValue
+    )}`;
+
+    const requestOptions = {
+        method: "GET",
         headers: {
-            'Content-Type': 'application/json'
+            Accept: "application/json",
         },
-        body: JSON.stringify({ action: 'search', name: inputValue })
-    }).then(response => {
-            console.log(response);
-            return response.json()
-        }).then(data => {
-            console.log('Success:', data);
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
+    };
+
+    displaySearchResults([], true);
+    searchResults.innerHTML += "<p>Loading...</p>";
+
+    try {
+        let response = await fetch(url, requestOptions);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data = await response.json();
+        displaySearchResults(data, false);
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }
 
-function displaySearchResults(results) {
-    searchResults.innerHTML = ''; // Clear any existing results
-
-    if (results.length === 0) {
-        searchResults.innerHTML = '<p>No results found</p>'; // Handle case where no results are found
+function displaySearchResults(results, isLoading) {
+    searchResults.innerHTML = "";
+    if (results.length === 0 && isLoading == false) {
+        searchResults.innerHTML = "<p>No results found</p>";
+        searchResults.classList.remove("show");
         return;
     }
 
-    // Map through the results and create elements to display them
-    results.map(result => {
-        const resultItem = document.createElement('div');
-        resultItem.classList.add('result-item');
+    searchResults.classList.add("show");
+
+    results.forEach((result) => {
+        const resultItem = document.createElement("div");
+        resultItem.classList.add("result-item");
         resultItem.innerHTML = `
-            <h3>${result.title}</h3>
-            <p>${result.description}</p>
-        `;
+        <a href="/product/info.html?name=${textToSlug(result.name)}">
+        <h3>${result.name}</h3>
+        <p>Price: ${result.price.toLocaleString()} VND</p>
+        </a>
+    `;
         searchResults.appendChild(resultItem);
     });
 }
 
-// xu ly link 
 function textToSlug(text) {
     return text
         .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .trim()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/^-+|-+$/g, "");
 }
 
-// xử lý trượt ảnh cop từ tài liệu 
-const swiper = new Swiper('.swiper', {
+// xử lý trượt ảnh cop từ tài liệu
+const swiper = new Swiper(".swiper", {
     spaceBetween: 30,
     effect: "fade",
     navigation: {
@@ -63,16 +95,19 @@ const swiper = new Swiper('.swiper', {
     pagination: {
         el: ".swiper-pagination",
         clickable: true,
-    }
+    },
 });
 
-// xử lý menu 
+// xử lý menu
 const menu = [
     {
         label: "AMEE",
         href: "/index",
     },
-
+    {
+        label: "",
+        href: "https://script.google.com/macros/s/AKfycbx9UqWJ6KOI4kqKwNN6kJ8sooIqo4sz9Hwe-ZlZdKXaakjznr7JnP8lrpywq3TToWY/exec",
+    },
     {
         label: "",
         href: "/pages/cart",
@@ -82,25 +117,26 @@ const menu = [
         href: "/pages/search",
     },
     {
-        label: "MEN",
+        label: "NAM",
         href: "/pages/men",
     },
     {
-        label: "WOMEN",
+        label: "NỮ",
         href: "/pages/women",
     },
     {
-        label: "BABY",
+        label: "TRẺ EM",
         href: "/pages/baby",
     },
     {
-        label: "ABOUT US",
+        label: "KHÁM PHÁ",
         href: "/pages/about-us",
     },
+];
 
-]
 // Hiển thị menu
 const menuElement = document.getElementById("navbar-component");
+
 function getMenu() {
     const navElement = document.createElement("nav");
     navElement.classList.add("nav-list");
@@ -128,41 +164,72 @@ function getMenu() {
                 iconSearchElement.classList.add("fas", "fa-search");
                 liElement.appendChild(iconSearchElement);
                 // xu ly search
-                const modalElement = document.getElementById('modal-search');
-                const closeModalElement = document.querySelector('.close-search');
-                const searchInput = document.getElementById('searchInput');
-                const searchButton = document.getElementById('searchButton');
+                const modalElement = document.getElementById("modal-search");
+                const searchInput = document.getElementById("searchInput");
+                const searchButton = document.getElementById("searchButton");
                 iconSearchElement.onclick = function () {
-                    modalElement.style.display = 'flex';
-                }
+                    modalElement.style.display = "flex";
+                };
                 window.onclick = function (event) {
                     if (event.target === modalElement) {
-                        modalElement.style.display = 'none'; 
+                        modalElement.style.display = "none";
                     }
-                }
-                searchButton.addEventListener('click', function() {
-                    const inputValue = searchInput.value; 
+                };
+                searchButton.addEventListener("click", function () {
+                    const inputValue = searchInput.value;
                     if (inputValue) {
-                        postSearchData(inputValue); // Call the function to post data
+                        getSearchData(inputValue);
                     } else {
-                        alert('Please enter a search term'); // Handle empty input
+                        alert("Please enter a search term");
+                    }
+                });
+                searchInput.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        const inputValue = searchInput.value.trim();
+                        if (inputValue) {
+                            getSearchData(inputValue);
+                        } else {
+                            alert("Please enter a search term");
+                        }
                     }
                 });
             } else if (item.href === "/pages/cart") {
+                const carts = JSON.parse(localStorage.getItem("cart")) || [];
                 const iconCartElement = document.createElement("i");
                 iconCartElement.classList.add("fas", "fa-shopping-cart");
                 iconCartElement.style.cursor = "pointer";
+
+                const quantityElement = document.createElement("span");
+                quantityElement.classList.add("cart-quantity");
+                quantityElement.textContent = carts.length;
+
                 iconCartElement.addEventListener("click", () => {
                     window.open(item.href + ".html");
                 });
-                liElement.appendChild(iconCartElement);
-            }
 
+                liElement.appendChild(iconCartElement);
+                liElement.appendChild(quantityElement);
+            } else if (item.href.includes("https")) {
+                const iconUserElement = document.createElement("i");
+                iconUserElement.classList.add("fas", "fa-user");
+                iconUserElement.style.cursor = "pointer";
+                liElement.appendChild(iconUserElement);
+                const userId = localStorage.getItem("userId");
+                if (userId) {
+                    iconUserElement.addEventListener("click", () => {
+                        window.location.href = "/pages/order.html";
+                    });
+                } else {
+                    iconUserElement.addEventListener("click", () => {
+                        window.open(item.href);
+                    });
+                }
+            }
         }
 
-        // đặt href của aElement thành href của item, hiển thị nội dung của item ở đó
-        if (item.href !== "/pages/search") aElement.href = item.href + ".html";
-
+        if (item.href !== "/pages/search" && !item.href.includes("https"))
+            aElement.href = item.href + ".html";
         aElement.textContent = item.label;
 
         liElement.appendChild(aElement);
@@ -185,42 +252,56 @@ function getMenuMobile() {
     navElement.classList.add("nav-list-menu-mobile");
     const ulElement = document.createElement("ul");
     ulElement.classList.add("list-menu-mobile");
+
     // xử lý, lặp qua các phần tử từ trong mảng từ đầu đến cuối
-    menu.forEach(item => {
-        // tạo thành phần li, thêm class primary-nav hoặc secondary-nav
-        const liElement = document.createElement("li");
-        const aElement = document.createElement("a");
-
-        // nếu href của item là AMEE thì thêm class primary-nav, ngược lại thêm secondary-nav
+    menu.forEach((item) => {
         if (item.href === "/index") {
-            liElement.classList.add("primary-nav")
-
-            const logoElement = document.createElement("img")
-            logoElement.src = "../images/icon/icon_shop.png"
-            logoElement.alt = "logo"
-
+            const liElement = document.createElement("li");
+            liElement.classList.add("primary-nav");
+            const logoElement = document.createElement("img");
+            logoElement.src = "../images/icon/icon_shop.png";
+            logoElement.alt = "logo";
             liElement.appendChild(logoElement);
-        } else {
-            liElement.classList.add("secondary-nav")
-            if (item.href === "/pages/cart") {
-                const iconCartElement = document.createElement("i")
-                iconCartElement.classList.add("fas", "fa-shopping-cart")
-                liElement.appendChild(iconCartElement);
-            }
+            ulElement.appendChild(liElement);
+        } else if (
+            item.label !== "" &&
+            item.href !== "/pages/cart" &&
+            item.href !== "/pages/search"
+        ) {
+            const liElement = document.createElement("li");
+            const aElement = document.createElement("a");
+            liElement.classList.add("primary-nav");
+            liElement.classList.add("secondary-nav");
+            aElement.href = item.href + ".html";
+            aElement.textContent = item.label;
+            liElement.appendChild(aElement);
+            ulElement.appendChild(liElement);
         }
+    });
 
+    const searchLiElement = document.createElement("li");
+    const iconSearchElement = document.createElement("i");
+    iconSearchElement.classList.add("fas", "fa-search");
+    searchLiElement.appendChild(iconSearchElement);
+    ulElement.appendChild(searchLiElement);
 
-        // đặt href của aElement thành href của item, hiển thị nội dung của item ở đó
-        aElement.href = item.href + ".html";
+    const cartLiElement = document.createElement("li");
+    const iconCartElement = document.createElement("i");
+    iconCartElement.classList.add("fas", "fa-shopping-cart");
+    cartLiElement.appendChild(iconCartElement);
+    ulElement.appendChild(cartLiElement);
 
-        aElement.textContent = item.label;
+    iconSearchElement.onclick = function () {
+        const modalElement = document.getElementById("modal-search");
+        modalElement.style.display = "flex";
+    };
 
-        liElement.appendChild(aElement);
-        ulElement.appendChild(liElement);
-        navElement.appendChild(ulElement);
-        containerMenuMobileElement.appendChild(navElement);
-    })
+    iconCartElement.onclick = function () {
+        window.location.href = "/pages/cart.html";
+    };
 
+    navElement.appendChild(ulElement);
+    containerMenuMobileElement.appendChild(navElement);
     function toggleMenuMobile() {
         const navElement = document.querySelector(".nav-list-menu-mobile");
         if (containerMenuMobileElement.classList.contains("showMenu")) {
@@ -236,12 +317,11 @@ function getMenuMobile() {
             iconMenuCloseElement.style.display = "block";
             containerMenuMobileElement.classList.add("showMenu");
             navElement.style.height = "100%";
-
         }
-    };
+    }
     iconMenuMobileElement.addEventListener("click", toggleMenuMobile);
 }
-getMenuMobile()
+getMenuMobile();
 
 // Nếu kéo xuống 0.01 trên trục y thì đổi màu nền menu
 document.body.addEventListener("scroll", () => {
@@ -259,11 +339,12 @@ document.body.addEventListener("scroll", () => {
     }
 });
 
-//Back button
+//Back button 
 const backButton = document.querySelector(".icon-back");
-// backButton.addEventListener("click", () => {
-//     window.location.href = "/index.html";
-// });
+backButton &&
+    backButton.addEventListener("click", () => {
+        window.location.href = "/index.html";
+    });
 
 // hien thi footer
 const footer = {
@@ -316,83 +397,166 @@ const footer = {
         label: "© 2024 AMEE. All rights reserved.",
         href: "https://www.codepen.io/jeetg57",
     },
-}
+};
 
-const footerElement = document.getElementById("footer")
+const footerElement = document.getElementById("footer");
 function getFooter() {
-
-    const itemContainerElement = document.createElement("div")
-    itemContainerElement.classList.add("row")
+    const itemContainerElement = document.createElement("div");
+    itemContainerElement.classList.add("row");
 
     Array.from([1, 2, 3, 4], (num) => {
-        const itemCoverElement = document.createElement("div")
-        itemCoverElement.classList.add("col")
+        const itemCoverElement = document.createElement("div");
+        itemCoverElement.classList.add("col");
 
-        const itemTitleElement = document.createElement("h2")
+        const itemTitleElement = document.createElement("h2");
         if (num === 1) {
-            itemTitleElement.textContent = "Về AMEE"
-            itemCoverElement.appendChild(itemTitleElement)
+            itemTitleElement.textContent = "Về AMEE";
+            itemCoverElement.appendChild(itemTitleElement);
 
-            footer.amee.forEach(child => {
-                const pElement = document.createElement("p")
-                pElement.textContent = child.label
+            footer.amee.forEach((child) => {
+                const pElement = document.createElement("p");
+                pElement.textContent = child.label;
 
-                const aElement = document.createElement("a")
-                aElement.href = child.href
+                const aElement = document.createElement("a");
+                aElement.href = child.href;
 
-                pElement.appendChild(aElement)
-                itemCoverElement.appendChild(pElement)
-
-            })
+                pElement.appendChild(aElement);
+                itemCoverElement.appendChild(pElement);
+            });
         } else if (num === 2) {
-            itemTitleElement.textContent = "Links"
-            itemCoverElement.appendChild(itemTitleElement)
+            itemTitleElement.textContent = "Links";
+            itemCoverElement.appendChild(itemTitleElement);
 
-            footer.links.forEach(child => {
-                const pElement = document.createElement("p")
-                pElement.textContent = child.label
+            footer.links.forEach((child) => {
+                const pElement = document.createElement("p");
+                pElement.textContent = child.label;
 
-                const aElement = document.createElement("a")
-                aElement.href = child.href
+                const aElement = document.createElement("a");
+                aElement.href = child.href;
 
-                pElement.appendChild(aElement)
-                itemCoverElement.appendChild(pElement)
-            })
+                pElement.appendChild(aElement);
+                itemCoverElement.appendChild(pElement);
+            });
         } else if (num === 3) {
-            itemTitleElement.textContent = "Social Media"
-            itemCoverElement.appendChild(itemTitleElement)
-            footer.socialMedia.forEach(child => {
-                const pElement = document.createElement("p")
-                pElement.textContent = child.label
+            itemTitleElement.textContent = "Social Media";
+            itemCoverElement.appendChild(itemTitleElement);
+            footer.socialMedia.forEach((child) => {
+                const pElement = document.createElement("p");
+                pElement.textContent = child.label;
 
-                const aElement = document.createElement("a")
-                aElement.href = child.href
+                const aElement = document.createElement("a");
+                aElement.href = child.href;
 
-                pElement.appendChild(aElement)
-                itemCoverElement.appendChild(pElement)
-            })
+                pElement.appendChild(aElement);
+                itemCoverElement.appendChild(pElement);
+            });
         } else {
-            itemTitleElement.textContent = "Copyright"
-            itemCoverElement.appendChild(itemTitleElement)
-            itemCoverElement.style.flexGrow = "1"
-            itemCoverElement.style.display = "flex"
-            itemCoverElement.style.justifyContent = "center"
-            itemCoverElement.style.alignItems = "center"
+            itemTitleElement.textContent = "Copyright";
+            itemCoverElement.appendChild(itemTitleElement);
+            itemCoverElement.style.flexGrow = "1";
+            itemCoverElement.style.display = "flex";
+            itemCoverElement.style.justifyContent = "center";
+            itemCoverElement.style.alignItems = "center";
 
+            const pElement = document.createElement("p");
+            pElement.textContent = footer.copyright.label;
+            const aElement = document.createElement("a");
+            aElement.href = footer.copyright.href;
 
-            const pElement = document.createElement("p")
-            pElement.textContent = footer.copyright.label
-            const aElement = document.createElement("a")
-            aElement.href = footer.copyright.href
-
-            pElement.appendChild(aElement)
-            itemCoverElement.appendChild(pElement)
+            pElement.appendChild(aElement);
+            itemCoverElement.appendChild(pElement);
         }
 
-        itemContainerElement.appendChild(itemCoverElement)
-    })
+        itemContainerElement.appendChild(itemCoverElement);
+    });
 
-    footerElement.appendChild(itemContainerElement)
-
+    footerElement.appendChild(itemContainerElement);
 }
-getFooter()
+getFooter();
+
+// hien thi best seller
+const API_KEY = "AIzaSyC0xEZjHni3DaJ-M2zOQRMCSYaMlj52z6k"; 
+const SHEET_ID = "1Y6mItoJuv6vRqi70oltmGod-5FKSYFmlCIlhQirlW5E"; 
+const TABLE_PRODUCT = "table_product!A1:H200";
+const TABLE_CUSTOMER = "table_customer!A1:G200";
+const TABLE_CUSTOMER_PRODUCT = "table_customer_product_order!A1:I200";
+const TABLE_PRODUCT_IMAGE = "table_product_image!A1:C200";
+const TABLE_PRODUCT_SIZE = "table_product_size!A1:C200";
+const TABLE_PRODUCT_COLOR = "table_product_color!A1:C200";
+const TABLE_COLOR = "table_color!A1:C200";
+const TABLE_SIZE = "table_size!A1:B200";
+
+async function formatSheetData(url) {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const [columns, ...rows] = data.values;
+        const mapData = rows.map((row) => {
+            return columns.reduce((acc, column, index) => {
+                acc[column] = row[index] !== undefined ? row[index] : null;
+                return acc;
+            }, {});
+        });
+        return mapData;
+    } catch (error) { }
+}
+
+async function getBestSellerData() {
+    try {
+        const [productData, productImageData] = await Promise.all([
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT}?key=${API_KEY}`
+            ),
+            formatSheetData(
+                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_PRODUCT_IMAGE}?key=${API_KEY}`
+            ),
+        ]);
+        if (!productData || !productImageData) {
+            throw new Error("Dữ liệu trả về từ API bị lỗi hoặc rỗng");
+        }
+
+        const mixProducts = productData
+            .map((product) => {
+                const image = productImageData.filter(
+                    (c) => c.product_id === product.id
+                );
+                return { ...product, image };
+            })
+            .filter((product) => product.is_best_seller === "TRUE");
+
+        return mixProducts;
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error.message);
+        return [];
+    }
+}
+
+function getRandomProducts(products, count = 4) {
+    const shuffled = products.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
+async function displayBestSellers() {
+    const bestSellerContainer = document.querySelector(".row-bestsale");
+    const bestSellerProducts = await getBestSellerData();
+
+    const randomProducts = getRandomProducts(bestSellerProducts, 4);
+
+    bestSellerContainer.innerHTML = "";
+
+    randomProducts.forEach((product) => {
+        const imageUrl = product.image[0].image_url;
+        const productHTML = `
+        <figure class="item">
+        <a href="./product/info.html?product_id=${product.id}">
+            <img src="${imageUrl}" alt="${product.name}" width="100%" />
+            <figcaption>${product.name}</figcaption>
+        </a>
+        </figure>
+    `;
+        bestSellerContainer.innerHTML += productHTML;
+    });
+}
+
+displayBestSellers();
+

@@ -5,6 +5,7 @@ html {
     font-family: "Montserrat";
     max-width: 100%;
     overflow-x: hidden;
+    position: relative;
 }
 
 .swiper {
@@ -23,9 +24,7 @@ html {
     width: 100%;
     height: 800px;
     object-fit: cover;
-
 }
-
 
 header {
     width: 100%;
@@ -47,7 +46,6 @@ header {
     font-family: "Montserrat";
     font-weight: 700;
     letter-spacing: 1px;
-
 }
 
 .border>li {
@@ -71,14 +69,14 @@ header {
     margin-bottom: 10px;
     text-decoration: none;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
-    transition: .5s ease;
+    transition: 0.5s ease;
 }
 
 .pxtext>p>a:hover {
     background-color: #cb4335;
     box-shadow: 1px 1px 5px rgba(203, 67, 53, 0.6);
     font-size: 20px;
-    transition: .5s;
+    transition: 0.5s;
 }
 
 .row {
@@ -225,15 +223,15 @@ a {
 
 .foot-icons>li>a>i {
     color: white;
-    transition: .2s ease;
+    transition: 0.2s ease;
     transition-timing-function: initial;
 }
 
 .foot-icons>li>a>i:hover {
-    color: #38A1F3;
+    color: #38a1f3;
     text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.6);
     font-size: 70px;
-    transition: .2s ease-out;
+    transition: 0.2s ease-out;
 }
 
 figcaption {
@@ -261,10 +259,9 @@ figcaption {
     gap: 10px;
 }
 
-
 .item:hover {
     filter: brightness(50%);
-    transition: .5s ease;
+    transition: 0.5s ease;
 }
 
 /* size sort */
@@ -410,18 +407,8 @@ select:focus {
         width: 250px;
     }
 
-    /* trang about us */
-    .row-about-us {
-        flex-wrap: nowrap;
-    }
-
-    /* trang baby */
-    .row-baby {
-        flex-wrap: nowrap;
-    }
-
     .card {
-        max-width: 200px;
+        max-width: 350px;
     }
 }
 
@@ -443,23 +430,13 @@ select:focus {
         width: 100%;
     }
 
-
-    /* trang about us */
-    .row-about-us {
-        flex-wrap: wrap;
-    }
-
-    /* trang baby */
-    .row-baby {
-        flex-wrap: wrap;
-    }
-
     .container-sort {
         width: 100%;
+        padding: 0 10px;
     }
 
     .card {
-        max-width: 250px;
+        width: 300px;
     }
 
     .list-product {
@@ -467,36 +444,6 @@ select:focus {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-    }
-
-    /* trang women */
-    .row-women {
-        flex-wrap: wrap;
-    }
-
-    .container-sort {
-        width: 100%;
-    }
-
-    .card {
-        max-width: 250px;
-    }
-
-    .list-product {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* trang sản phẩm */
-    .row-product {
-        flex-wrap: wrap;
-        width: 100%;
-    }
-
-    .row-product>.info-product {
-        width: 100%;
     }
 
     .row-product>div {
@@ -540,10 +487,10 @@ select:focus {
     }
 
     .row-cart>.column {
-        width: 100%
+        width: 100%;
     }
 
     .row-cart>.column2 {
-        width: 100%
+        width: 100%;
     }
 }

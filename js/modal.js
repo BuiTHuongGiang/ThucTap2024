@@ -33,7 +33,7 @@ const questions = [
 ];
 
 let currentQuestion = 0;
-let userResponses = {};
+let userResponses = [];
 
 function renderQuestion() {
     const quizDiv = document.getElementById("quiz");
@@ -55,7 +55,7 @@ function renderQuestion() {
 }
 
 function handleAnswer(key, answer) {
-    userResponses[key] = answer;
+    userResponses.push({ [key]: answer });
 
     if (currentQuestion < questions.length - 1) {
         currentQuestion++;

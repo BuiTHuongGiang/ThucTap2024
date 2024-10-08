@@ -22,10 +22,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="./js/preloader.js"></script>
 </head>
+
 <body>
     <header id="navbar-component"></header>
     <div class="container-icon">
-        <div class="parent-icon"> 
+        <div class="parent-icon">
             <div class="icon-menu-open">
                 <i class="fas fa-bars fa-lg"></i>
             </div>
@@ -33,43 +34,53 @@
                 <i class="fas fa-times fa-lg"></i>
             </div>
         </div>
-    </div>  
+    </div>
     <div class="checkout-container">
-        <h2>Checkout Form</h2>
+        <h2>Hoá đơn thanh toán</h2>
         <form id="checkoutForm">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+            <label for="name">Họ và tên:</label>
+            <input type="text" id="name" name="name" required />
 
-            <label for="address">Address:</label>
+            <label for="address">Địa chỉ:</label>
             <textarea id="address" name="address" rows="3" required></textarea>
 
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required>
+            <label for="phone">Số điện thoại:</label>
+            <input type="tel" id="phone" name="phone" required />
 
-            <label for="payment-method">Payment Method:</label>
+            <label for="payment-method">Phương thức thanh toán:</label>
             <select id="payment-method" name="payment-method" required>
-                <option value="credit-card">Credit Card</option>
-                <option value="paypal">PayPal</option>
-                <option value="cash-on-delivery">Cash on Delivery</option>
+                <option value="credit-card">Thanh toán khi nhận hàng </option>
+                <option value="paypal">Thanh toán bằng thẻ tín dụng</option>
+                <option value="cash-on-delivery">Thanh toán bằng tài khoản ngân hàng</option>
             </select>
 
-            <label for="status">Status:</label>
+            <label for="status">Trạng thái:</label>
             <select id="status" name="status" required>
-                <option value="pending">Pending</option>
+                <option value="pending">Chờ xác nhận</option>
             </select>
 
             <div class="product-list">
-                <h3>Product List</h3>
+                <h3>Danh sách sản phẩm đã chọn</h3>
             </div>
 
-            <label for="total">Total Amount:</label>
-            <input type="text" id="total" name="total" value="0" readonly>
-
-            <button type="submit">Place Order</button>
+            <label for="total">Tổng số tiền:</label>
+            <input type="text" id="total" name="total" value="0" readonly />
+            <button type="submit">Đặt hàng</button>
         </form>
+    </div>
+
+    <div id="modal-search" class="modal-search">
+        <div class="modal-search-content">
+            <span class="close-search">&times;</span>
+            <h2>Search</h2>
+            <input type="text" id="searchInput" placeholder="Type something to search..." />
+            <button id="searchButton">Search</button>
+            <div id="searchResults"></div>
+        </div>
     </div>
     <footer id="footer"></footer>
     <script defer src="../main.js"></script>
     <script defer src="../js/cart.js"></script>
 </body>
+
 </html>

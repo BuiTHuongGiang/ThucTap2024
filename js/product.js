@@ -1,22 +1,27 @@
 // lay link web
-const pathName = window.location.pathname
-const fullUrl = window.location.href
-
-// lay data product
-const API_KEY = "AIzaSyC0xEZjHni3DaJ-M2zOQRMCSYaMlj52z6k"
-const SHEET_ID = "1Y6mItoJuv6vRqi70oltmGod-5FKSYFmlCIlhQirlW5E"
-const TABLE_PRODUCT = "table_product!A1:F200"
-const TABLE_CUSTOMER_PRODUCT = "table_customer_product!A1:I200"
-const TABLE_PRODUCT_IMAGE = "table_product_image!A1:C200"
-const TABLE_PRODUCT_SIZE = "table_product_size!A1:C200"
-const TABLE_PRODUCT_COLOR = "table_product_color!A1:C200"
-const TABLE_COLOR = "table_color!A1:C200"
-const TABLE_SIZE = "table_size!A1:B200"
+const pathName = window.location.pathname;
+const fullUrl = window.location.href;
 
 // lay du lieu trong localStorage
 function getCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || []
-    return cart
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    return cart;
+}
+
+function filterProductsBySurvey(surveyData, products) {
+    return products.filter((product) => {
+        return surveyData.every((surveyItem) => {
+            const key = Object.keys(surveyItem)[0];
+            const value = surveyItem[key];
+
+            return (
+                (product.description &&
+                    product.description.toLowerCase().includes(value.toLowerCase())) ||
+                (product[key] &&
+                    product[key].toLowerCase().includes(value.toLowerCase()))
+            );
+        });
+    });
 }
 
 async function formatSheetData(url) {
@@ -24,19 +29,18 @@ async function formatSheetData(url) {
         const response = await fetch(url);
         const data = await response.json();
         const [columns, ...rows] = data.values;
-        const mapData = rows.map(row => {
+        const mapData = rows.map((row) => {
             return columns.reduce((acc, column, index) => {
                 acc[column] = row[index] !== undefined ? row[index] : null;
                 return acc;
             }, {});
-        })
+        });
         return mapData;
     } catch (error) { }
 }
 
 async function getAllData() {
     try {
-        // Gọi tất cả API song song bằng Promise.all
         const [
             productData,
             productImageData,
@@ -63,9 +67,6 @@ async function getAllData() {
             formatSheetData(
                 `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_COLOR}?key=${API_KEY}`
             ),
-            formatSheetData(
-                `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${TABLE_CUSTOMER_PRODUCT}?key=${API_KEY}`
-            ),
         ]);
 
         // Kiểm tra xem dữ liệu có hợp lệ trước khi xử lý
@@ -77,42 +78,45 @@ async function getAllData() {
             !sizeData ||
             !productImageData
         ) {
-            throw new Error('Dữ liệu trả về từ API bị lỗi hoặc rỗng');
+            throw new Error("Dữ liệu trả về từ API bị lỗi hoặc rỗng");
         }
 
         // Kết hợp màu sắc với dữ liệu productColor và color
         const joinColors = (productColorData, colorData) => {
-            return productColorData.map(productColor => {
-                const color = colorData.find(c => c.id === productColor.color_id);
+            return productColorData.map((productColor) => {
+                const color = colorData.find((c) => c.id === productColor.color_id);
                 return { ...productColor, ...color };
             });
-        }
+        };
 
         // Kết hợp size với dữ liệu productSize và size
         const joinSizes = (productSizeData, sizeData) => {
-            return productSizeData.map(productSize => {
-                const size = sizeData.find(c => c.id === productSize.size_id);
+            return productSizeData.map((productSize) => {
+                const size = sizeData.find((c) => c.id === productSize.size_id);
                 return { ...productSize, ...size };
             });
-        }
+        };
 
         // Kết hợp dữ liệu product với màu sắc, size và hình ảnh
-        const mixProducts = productData.map(product => {
-            const color = joinColors(productColorData, colorData).filter(c => c.product_id === product.id);
-            const size = joinSizes(productSizeData, sizeData).filter(c => c.product_id === product.id);
-            const image = productImageData.filter(c => c.product_id === product.id);
+        const mixProducts = productData.map((product) => {
+            const color = joinColors(productColorData, colorData).filter(
+                (c) => c.product_id === product.id
+            );
+            const size = joinSizes(productSizeData, sizeData).filter(
+                (c) => c.product_id === product.id
+            );
+            const image = productImageData.filter((c) => c.product_id === product.id);
             return { ...product, color, size, image };
         });
 
         return mixProducts;
-
     } catch (error) {
-        console.error('Lỗi khi lấy dữ liệu:', error.message);
+        console.error("Lỗi khi lấy dữ liệu:", error.message);
         return []; // Trả về một mảng trống trong trường hợp lỗi
     }
 }
 
-// cập nhật đườn dẫn url 
+// cập nhật đườn dẫn url
 function updateQueryString(key, value) {
     const url = new URL(window.location);
     if (value) {
@@ -160,7 +164,8 @@ function showSkeleton(container, count, type) {
         container.appendChild(parentItemSkeleton);
     }
 }
-// tao sort by
+
+// tao sort by 
 async function creatSortByProduct(pathName) {
     const validPaths = [
         "/pages/women.html",
@@ -170,6 +175,22 @@ async function creatSortByProduct(pathName) {
     if (!validPaths.includes(pathName)) return;
     const sizeSortElement = document.querySelector("#size-sort");
     const colorSortElement = document.querySelector("#color-sort");
+
+    const toggleSortElements = document.querySelectorAll(".toggle-sort");
+
+    toggleSortElements.forEach((toggleSortElement) => {
+        const sortType = toggleSortElement.nextElementSibling;
+        const icon = toggleSortElement.querySelector("i");
+
+        toggleSortElement.addEventListener("click", () => {
+            const isOpen = sortType.style.display === "block";
+            sortType.style.display = isOpen ? "none" : "block";
+
+            icon.className = isOpen
+                ? "fas fa-sort-up fa-lg"
+                : "fas fa-sort-down fa-lg";
+        });
+    });
 
     showSkeleton(sizeSortElement, 5, "sort");
     showSkeleton(colorSortElement, 5, "sort");
@@ -249,6 +270,8 @@ async function creatSortByProduct(pathName) {
 }
 
 async function getCurrentDataForPage(url) {
+    if (url === "/product/info.html") return;
+
     const listProductElement = document.querySelector(".list-product");
     const urlParams = new URLSearchParams(window.location.search);
     const selectedSize = urlParams.get("size");
@@ -274,29 +297,17 @@ async function getCurrentDataForPage(url) {
     } else if (url === "/pages/baby.html") {
         filterData = data.filter((c) => c.type === "baby");
     }
-    if (userResponses) {
-        let matchedProducts = [];
-        let otherProducts = [];
+    if (userResponses && userResponses.length > 0) {
+        const matchedProducts = [];
+        const otherProducts = [];
         const matchedProductIds = new Set();
 
-        Object.entries(userResponses).forEach(([key, value]) => {
-            if (value) {
-                filterData.forEach((product) => {
-                    let shouldAdd = false;
+        const filteredProducts = filterProductsBySurvey(userResponses, filterData);
 
-                    if (key === "color" && product.color.some((c) => c.id === value)) {
-                        shouldAdd = true;
-                    } else if (key === "gender" && product.gender === value) {
-                        shouldAdd = true;
-                    } else if (key === "age" && product.ageGroup === value) {
-                        shouldAdd = true;
-                    }
-
-                    if (shouldAdd && !matchedProductIds.has(product.id)) {
-                        matchedProducts.push(product);
-                        matchedProductIds.add(product.id);
-                    }
-                });
+        filteredProducts.forEach((product) => {
+            if (!matchedProductIds.has(product.id)) {
+                matchedProducts.push(product);
+                matchedProductIds.add(product.id);
             }
         });
 
@@ -306,7 +317,9 @@ async function getCurrentDataForPage(url) {
             }
         });
 
-        filterData = [...matchedProducts, ...otherProducts];
+        const finalFilteredProducts = [...matchedProducts, ...otherProducts];
+
+        console.log(finalFilteredProducts);
     }
 
     if (selectedColor) {
@@ -334,7 +347,6 @@ async function getCurrentDataForPage(url) {
         const imageElement = document.createElement("img");
         imageElement.src = product.image[0].image_url;
         const h3Element = document.createElement("h3");
-        //Thuanfix
         if (product.name.length > 30)
             h3Element.textContent = product.name.substring(0, 30) + "...";
         else h3Element.textContent = product.name;
@@ -350,10 +362,31 @@ async function getCurrentDataForPage(url) {
         listProductElement.appendChild(cardElement);
     });
 }
-creatSortByProduct(pathName)
-getCurrentDataForPage(pathName)
+
+creatSortByProduct(pathName);
+getCurrentDataForPage(pathName);
 
 function addToCart(id, name, image, price, color_id, size_id, number) {
+    toastr["success"]("Add to cart successfully");
+
+    toastr.options = {
+        closeButton: false,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "5000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+    };
+
     const cart = getCart();
     const indexProductCart = cart.findIndex(
         (product) =>
@@ -368,90 +401,83 @@ function addToCart(id, name, image, price, color_id, size_id, number) {
         cart.push({ id, name, image, price, color_id, size_id, number });
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    console.log(cart);
-    alert("Đã thêm vào giỏ hàng");
+    document.querySelector(".cart-quantity").textContent = getCart().length;
 }
 
 // trang infor product
 async function getInfoProductPage(fullUrl, pathName) {
-    if (pathName !== "/product/info.html") return
-    const data = await getAllData()
+    if (pathName !== "/product/info.html") return;
+
+    const data = await getAllData();
     const urlObj = new URL(fullUrl);
-    const nameParam = urlObj.searchParams.get('name');
-    const product = data.find(c => textToSlug(c.name) === nameParam)
+    const nameParam = urlObj.searchParams.get("name");
+    const product = data.find((c) => textToSlug(c.name) === nameParam);
 
-    const nameProductElement = document.querySelector(".name-product")
-    nameProductElement.textContent = product.name
+    const nameProductElement = document.querySelector(".name-product");
+    nameProductElement.textContent = product.name;
 
-    const priceProductElement = document.querySelector(".price-product")
-    priceProductElement.textContent = product.price + " VND"
+    const priceProductElement = document.querySelector(".price-product");
+    priceProductElement.textContent = product.price + " VND";
 
-    const contentDescriptionElement = document.querySelector(".content-description")
-    contentDescriptionElement.textContent = product.description
+    const contentDescriptionElement = document.querySelector(
+        ".content-description"
+    );
+    contentDescriptionElement.textContent = product.description;
 
-    const swiperWrapperElement = document.querySelector(".swiper-wrapper")
+    const swiperWrapperElement = document.querySelector(".swiper-wrapper");
     product.image.forEach((image) => {
-        const swiperSlideElement = document.createElement("div")
-        swiperSlideElement.className = "swiper-slide slide-info"
-        const imgElement = document.createElement("img")
-        imgElement.src = image.image_url
-        swiperSlideElement.appendChild(imgElement)
-        swiperWrapperElement.appendChild(swiperSlideElement)
-    })
+        const swiperSlideElement = document.createElement("div");
+        swiperSlideElement.className = "swiper-slide slide-info";
+        const imgElement = document.createElement("img");
+        imgElement.src = image.image_url;
+        swiperSlideElement.appendChild(imgElement);
+        swiperWrapperElement.appendChild(swiperSlideElement);
+    });
 
-    const infoProductColorElement = document.querySelector("#info-product-color")
+    const infoProductColorElement = document.querySelector("#info-product-color");
+    const colorSelectElement = document.createElement("select");
+    colorSelectElement.name = "color";
+    colorSelectElement.id = "color-select";
+
     product.color.forEach((color) => {
-        const parentItemColor = document.createElement("div")
-        parentItemColor.className = "parent-item-sort"
-        const inputElement = document.createElement("input")
-        inputElement.type = "radio"
-        inputElement.name = "color"
-        inputElement.id = color.id
-        inputElement.value = color.id
-        parentItemColor.appendChild(inputElement)
-        const pElement = document.createElement("p")
-        pElement.textContent = color.name
-        parentItemColor.appendChild(pElement)
-        infoProductColorElement.appendChild(parentItemColor)
-    })
+        const optionElement = document.createElement("option");
+        optionElement.value = color.id;
+        optionElement.textContent = color.name;
+        colorSelectElement.appendChild(optionElement);
+    });
+    infoProductColorElement.appendChild(colorSelectElement);
 
-    const infoProductSizeElement = document.querySelector("#info-product-size")
+    const infoProductSizeElement = document.querySelector("#info-product-size");
+    const sizeSelectElement = document.createElement("select");
+    sizeSelectElement.name = "size";
+    sizeSelectElement.id = "size-select";
+
     product.size.forEach((size) => {
-        const parentItemSize = document.createElement("div")
-        parentItemSize.className = "parent-item-sort"
-        const inputElement = document.createElement("input")
-        inputElement.type = "radio"
-        inputElement.name = "size"
-        inputElement.id = size.id
-        inputElement.value = size.id
-        parentItemSize.appendChild(inputElement)
-        const pElement = document.createElement("p")
-        pElement.textContent = size.name
-        parentItemSize.appendChild(pElement)
-        infoProductSizeElement.appendChild(parentItemSize)
-    })
+        const optionElement = document.createElement("option");
+        optionElement.value = size.id;
+        optionElement.textContent = size.name;
+        sizeSelectElement.appendChild(optionElement);
+    });
 
-    function addToCart(id, name, image, price, color_id, size_id, number) {
-        const cart = getCart()
-        const indexProductCart = cart.findIndex(product => product.id === id && product.color_id === color_id && product.size_id === size_id)
-        if (indexProductCart !== -1) {
-            cart[indexProductCart].number = Number(cart[indexProductCart].number) + Number(number);
-        } else {
-            cart.push({ id, name, image, price, color_id, size_id, number })
-        }
-        localStorage.setItem('cart', JSON.stringify(cart))
-        console.log(cart)
-        alert('Đã thêm vào giỏ hàng')
-    }
+    infoProductSizeElement.appendChild(sizeSelectElement);
 
-    const buttonElement = document.querySelector(".button-cart")
+    const inventoryElement = document.querySelector(".inventory");
+    inventoryElement.textContent = "Kho: " + product.amount;
+
+    const buttonElement = document.querySelector(".button-cart");
     buttonElement.addEventListener("click", () => {
-        const colorSelected = document.querySelector('input[name="color"]:checked')
-        const sizeSelected = document.querySelector('input[name="size"]:checked')
-        const numberSelected = document.querySelector('input[name="number"]:checked')
+        const colorSelected = document.querySelector("#color-select");
+        const sizeSelected = document.querySelector("#size-select");
+        const numberSelected = document.querySelector("#number-select");
+
+        if (Number(product.amount) <= 0) {
+            alert("Xin lỗi quý khách, mặt hàng này đã hết!");
+            return;
+        }
+
         if (!colorSelected || !sizeSelected || !numberSelected) {
-            alert('Vui lòng chọn màu, size và số lượng')
-            return
+            alert("Vui lòng chọn màu, size và số lượng");
+            return;
         }
         const productCart = {
             id: product.id,
@@ -460,10 +486,18 @@ async function getInfoProductPage(fullUrl, pathName) {
             price: product.price,
             color_id: colorSelected.value,
             size_id: sizeSelected.value,
-            number: numberSelected.value
-        }
+            number: numberSelected.value,
+        };
 
-        addToCart(productCart.id, productCart.name, productCart.image, productCart.price, productCart.color_id, productCart.size_id, productCart.number)
-    })
+        addToCart(
+            productCart.id,
+            productCart.name,
+            productCart.image,
+            productCart.price,
+            productCart.color_id,
+            productCart.size_id,
+            productCart.number
+        );
+    });
 }
-getInfoProductPage(fullUrl, pathName)
+getInfoProductPage(fullUrl, pathName);
